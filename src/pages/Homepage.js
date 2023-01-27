@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useReducer } from 'react'
 import { signOut, onAuthStateChanged } from "firebase/auth";
 
 import { auth } from "../firebase-config";
@@ -55,10 +55,8 @@ function Homepage() {
         FetchCoursesData()
     }, [])
 
-    console.log({ courses })
 
     const [selectedCourseID, setSelectedCourseID] = useState(null)
-    console.log({ selectedCourseID })
 
     const [selectedCourse, setSelectedCourse] = useState(null)
     useEffect(() => {
@@ -67,6 +65,20 @@ function Homepage() {
         setSelectedCourse(selectedCourse)
     }, [selectedCourseID])
     console.log({ selectedCourse })
+
+
+    const [preferences, setPreferences] = useState(null)
+    useEffect(() => {
+        if (!selectedCourse) return;
+        var preferences = {}
+        selectedCourse.course_fields_and_options.forEach(fieldAndOptions => {
+            preferences[fieldAndOptions.field_name] = null
+        })
+        setPreferences(preferences)
+    }, [selectedCourse])
+
+    console.log({ preferences })
+    const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     return (
         <div>
@@ -94,26 +106,43 @@ function Homepage() {
                     {selectedCourse.course_fields_and_options.map((fieldAndOptions, i) => {
                         return <div key={i}>
                             <label className="block text-sm font-medium text-gray-700">{fieldAndOptions.field_fullname}</label>
-                           <select name={fieldAndOptions.field_name} className="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" aria-label="Default select example">
+                            <select
+                                onChange={(e) => {
+                                    var newPreferences = preferences
+                                    newPreferences[fieldAndOptions.field_name] = e.target.value
+                                    setPreferences(newPreferences)
+                                    console.log({ preferences })
+                                    forceUpdate()
+                                }}
+
+                                name={fieldAndOptions.field_name} className="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" aria-label="Default select example">
                                 <option >{fieldAndOptions.field_fullname}</option>
                                 {fieldAndOptions.field_options.map((option, i) => {
-                                    //condition 
-                                    var conditionField = option?.condition?.field
-                                    var conditionValue = option?.condition?.value
-
-                                  //  console.log({conditionField})
-                                   // console.log({conditionValue})
-
                                     var showThisOption = true
-                                    if (conditionField && conditionValue) {
-                                      
-                                    }
+                                    var optionConditions = option?.conditions
+
+                                    optionConditions?.forEach(condition => {
+                                        //condition 
+                                        var conditionField = condition?.field
+                                        var conditionValue = condition?.value
+
+                                        //make sure value of this condition in preferences is equal to conditionValue
+                                        if (conditionField && conditionValue) {
+                                            if (preferences?.[conditionField] != conditionValue) {
+                                                showThisOption = false
+                                            } 
+                                        } 
+                                    })
+
+
                                     if (!showThisOption) return null
 
-                                    return (<option key={i} value={option.option_name} >{option.option_fullname}</option>)
+                                    return (
+                                        <option key={i} value={option.option_name} >{option.option_fullname} + {JSON.stringify(option.conditions)} </option>
+                                    )
                                 })}
 
-                            </select> 
+                            </select>
 
                         </div>
                     })}
