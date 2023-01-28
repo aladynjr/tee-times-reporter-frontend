@@ -4,6 +4,8 @@ import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase-config";
 
 import RedirectWhenLoggedOrNotLogged from '../utilities.js/RedirectWhenLoggedOrNotLogged'
+import {IoTimeSharp} from 'react-icons/io5'
+import {IoGolf} from 'react-icons/io5'
 
 function Homepage() {
 
@@ -128,14 +130,16 @@ function Homepage() {
                 {/* Homepage: YOU ARE LOGGED IN ! {golferData.golfer_first_name} */}
                 {/* <img src={selectedCourse?.course_image} alt="" className="w-full object-cover  absolute" style={{maxHeight:'500px'}} /> */}
                 <div className="flex justify-center">
-                    <div className="block p-6 rounded-lg shadow-lg bg-white mt-20 mb-64  " style={{ width: '90%', maxWidth: '540px', zIndex: '1' }}>
-                        <h5 className="text-gray-900 text-3xl leading-tight font-medium mb-2">Create a tee time alert</h5>
-                        <p className="text-gray-700 text-base mb-4">
-                            We well send you an email and a text when a tee time is available with your preferences
-                        </p>
+                    <div className="block p-6 pt-4 rounded-lg shadow-lg bg-white mt-20 mb-64  " style={{ width: '90%', maxWidth: '540px', zIndex: '1', background: 'linear-gradient(0deg, #ffffff 92%, #16a34a 40%)' }}>
+                        <h5 className="text-gray-900 text-white text-xl leading-tight font-medium mb-2 flex items-center content-center " style={{justifyContent:'center'}}>Create a tee time alert <IoTimeSharp style={{marginLeft:'12px'}} /></h5>
+                        {/* <p className="text-gray-700 text-white text-base mb-4">
+                            We well send you an email and a text message when a tee time is available with your preferences
+                        </p> */}
 
                         <div className='options  mt-12' >
-                            <div className="mb-3  flex items-center mb-6">
+                            <div className="mb-3  flex items-center pb-5" style={{borderBottom:'#e7e4e4 1px solid'}}>
+                            <IoGolf style={{fontSize:'23px', marginRight:'10px'}} />
+
                                 <label className="block  text-lg text-gray-700 whitespace-nowrap">Course</label>
                                 <select onChange={(e) => setSelectedCourseID(e.target.value)}
                                     // className="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" 
@@ -155,7 +159,7 @@ function Homepage() {
 
 
                                 {selectedCourse.course_fields_and_options.map((fieldAndOptions, i) => {
-                                    return <div key={i} className='mb-4 flex items-center mb-6' >
+                                    return <div key={i} className='mb-4 flex items-center pt-1 pb-5' style={{borderBottom:'#e7e4e4 1px solid'}} >
                                         <label className="block  text-lg text-gray-700 whitespace-nowrap ">{fieldAndOptions.field_fullname}</label>
                                         <select
                                             onChange={(e) => {
