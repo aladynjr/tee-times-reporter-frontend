@@ -1,5 +1,5 @@
 import React from 'react'
-
+import globalVal from '../globalVal';
 const AddNewGolferToDatabase = async (golfer_first_name,golfer_last_name,golfer_email, golfer_uuid) => {
 
     try {
@@ -9,7 +9,7 @@ const AddNewGolferToDatabase = async (golfer_first_name,golfer_last_name,golfer_
         golfer_email,
         golfer_uuid
       };
-      const response = await fetch(/*HOST*/"http://localhost:8080/api/golfer", {
+      const response = await fetch(`${globalVal.host}/api/golfer`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)

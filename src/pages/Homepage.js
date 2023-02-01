@@ -3,13 +3,38 @@ import { signOut, onAuthStateChanged } from "firebase/auth";
 
 import { auth } from "../firebase-config";
 
-import RedirectWhenLoggedOrNotLogged from '../utilities.js/RedirectWhenLoggedOrNotLogged'
+import RedirectWhenLoggedOrNotLogged from '../utilities/RedirectWhenLoggedOrNotLogged'
 import { IoTimeSharp } from 'react-icons/io5'
 import { IoGolf } from 'react-icons/io5'
+import globalVal from '../globalVal'
+import { useNavigate } from 'react-router-dom';
+import LoggedInOrNot from '../utilities/LoggedInOrNot';
 
 function Homepage() {
 
-    RedirectWhenLoggedOrNotLogged(auth, false, '/')
+    const navigate = useNavigate();
+
+    const logout = async () => {
+        await signOut(auth);
+
+        localStorage.removeItem('isUserLoggedIn');
+        navigate("/")
+
+    };
+  //  RedirectWhenLoggedOrNotLogged( false, '/')
+
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(null);
+
+  useEffect(()=>{
+    setIsUserLoggedIn(LoggedInOrNot())
+  },[])
+
+  if (!isUserLoggedIn) {
+  //  console.log('%c user is not logged in !', 'color: red; font-size: 20px;')
+      navigate('/login')
+    } else{
+    //  console.log('%c user is logged in !', 'color: green; font-size: 20px;')
+  }
 
     const [golferUUID, setGolferUUID] = useState(null)
     const [golferData, setGolferData] = useState(null)
@@ -23,7 +48,7 @@ function Homepage() {
 
     const FetchGolferData = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/golfer/uuid/${golferUUID}`);
+            const response = await fetch(`${globalVal.host}/api/golfer/uuid/${golferUUID}`);
             const jsonData = await response.json();
 
             setGolferData(jsonData);
@@ -43,7 +68,7 @@ function Homepage() {
 
     const FetchCoursesData = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/course/`);
+            const response = await fetch(`${globalVal.host}/api/course/`);
             const jsonData = await response.json();
 
             setCourses(jsonData);
@@ -75,6 +100,12 @@ function Homepage() {
         if (!selectedCourse) return;
         var preferences = {}
         selectedCourse.course_fields_and_options.forEach(fieldAndOptions => {
+            console.log(fieldAndOptions)
+            //check if we have a field where an option is always fixed and not changeable for the users(for example: booking class in the first golf course)
+            if(fieldAndOptions?.field_fixed_option){
+                preferences[fieldAndOptions.field_name] = fieldAndOptions.field_fixed_option
+                return;
+            }
             preferences[fieldAndOptions.field_name] = fieldAndOptions.field_options[0].option_name
         })
         setPreferences(preferences)
@@ -89,7 +120,11 @@ function Homepage() {
         //receive a date like 01-27-2023 then geenrate dates for the following days, the first one should be 01-28-2023, the last one should be 02-03-2023
         var dates = []
         for (var i = 0; i < 7; i++) {
-            var newDate = new Date(date)
+            //convert date to 2023-01-27
+            //date = date.split('-')[1] + "-" + date.split('-')[0] + "-" + date.split('-')[2]
+           // console.log(date)
+            var newDate = new Date(date.split('-')[2],date.split('-')[0]-1,date.split('-')[1] )
+          // var newDate = new Date(date.split('-')[0],date.split('-')[1]-1,date.split('-')[2] )
             newDate.setDate(newDate.getDate() + i)
 
             //output in form of 01-28-2023
@@ -111,7 +146,7 @@ function Homepage() {
         //update duration inside db using PUT with route /api/dashboard 
 
         try {
-            let response = await fetch(`http://localhost:8080/api/golfer`, {
+            let response = await fetch(`${globalVal.host}/api/golfer`, {
                 method: 'PUT',
                 headers: {
                     'Accept': 'application/json',
@@ -165,7 +200,12 @@ function Homepage() {
 
 
                                 {selectedCourse.course_fields_and_options.map((fieldAndOptions, i) => {
-                                    return <div key={i} className='mb-4 flex items-center pt-1 pb-5' style={{ borderBottom: '#e7e4e4 1px solid' }} >
+                                    //dont show field if it has a fixed option 
+                                    if (fieldAndOptions?.field_fixed_option) {
+                                        return null
+                                    }
+
+                                    return (<div key={i} className='mb-4 flex items-center pt-1 pb-5' style={{ borderBottom: '#e7e4e4 1px solid' }} >
                                         <label className="block  text-lg text-gray-700 whitespace-nowrap ">{fieldAndOptions.field_fullname}</label>
                                         <select
                                             onChange={(e) => {
@@ -173,7 +213,7 @@ function Homepage() {
                                                 newPreferences[fieldAndOptions.field_name] = e.target.value
                                                 setPreferences(newPreferences)
                                                 console.log({ preferences })
-                                                forceUpdate()
+                                                //forceUpdate()
                                             }}
 
                                             name={fieldAndOptions.field_name}
@@ -206,7 +246,7 @@ function Homepage() {
                                                     return GenerateDatesDuring7Days(option.option_name).map((date, i) => {
                                                         return <option key={i} value={date} >{
                                                             //show date in legible format
-                                                            new Date(date).toLocaleDateString("en-US", {
+                                                            new Date(date).toLocaleDateString('en-US',{
                                                                 weekday: 'long', // long, short, narrow
                                                                 year: 'numeric', // numeric, 2-digit
                                                                 month: 'long', // numeric, 2-digit, long, short, narrow
@@ -223,10 +263,10 @@ function Homepage() {
 
                                             })}
 
-
+                                            
                                         </select>
 
-                                    </div>
+                                    </div>)
                                 })}
 
 
@@ -266,13 +306,17 @@ function Homepage() {
                                 var cleanedKey = key.replace(/_/g, ' ')
                                 cleanedKey = cleanedKey.charAt(0).toUpperCase() + cleanedKey.slice(1)
 
+                            
+                                    
+                                    var date = new Date(golferData.golfer_preferences[key].split('-')[2],golferData.golfer_preferences[key].split('-')[0]-1,golferData.golfer_preferences[key].split('-')[1] )
+
 
                                 return <div key={i} className="flex  items-center mb-4 mb-4   pb-3" style={{ borderBottom: '#e7e4e4 1px solid', marginTop: '-5px' }}>
                                     <div className='capitalize'>{cleanedKey} </div> <div className='font-semibold ml-2 capitalize' > {golferData.golfer_preferences[key]} </div>
 
 
 
-                                    {key == "date" && <span className="text-gray-500 text-xs ml-2">({new Date(golferData.golfer_preferences[key]).toLocaleDateString("en-US", {
+                                    {key == "date" && <span className="text-gray-500 text-xs ml-2">({date.toLocaleDateString("en-US", {
                                         weekday: 'long', // long, short, narrow
                                         year: 'numeric', // numeric, 2-digit
                                         month: 'long', // numeric, 2-digit, long, short, narrow
@@ -298,6 +342,16 @@ function Homepage() {
                         </div>}
                     </div>
                 </div>
+
+                <button type="button"
+                onClick={() => {
+
+                    logout()
+
+                }}
+                data-bs-dismiss="modal"
+                className="px-3 py-1 m-6 bg-red-900 ml-6 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out ml-1">
+                LOGOUT</button>
 
             </div>}
 
@@ -365,7 +419,11 @@ function Homepage() {
                         </div>
                     </div>
                 </div>
+              
             </div>
+
+
+       
         </div>
     )
 }

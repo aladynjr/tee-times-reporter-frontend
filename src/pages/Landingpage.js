@@ -1,11 +1,11 @@
 import React,{useEffect} from 'react'
 
-import RedirectWhenLoggedOrNotLogged from '../utilities.js/RedirectWhenLoggedOrNotLogged'
+import RedirectWhenLoggedOrNotLogged from '../utilities/RedirectWhenLoggedOrNotLogged'
 import { auth } from "../firebase-config";
 
 
 function Landingpage() {
-    RedirectWhenLoggedOrNotLogged(auth, '/home', false)
+   // RedirectWhenLoggedOrNotLogged( '/home', false)
 
   return (
     <div>Landingpage : you are not logged in</div>

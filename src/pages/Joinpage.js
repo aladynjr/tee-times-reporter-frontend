@@ -4,14 +4,30 @@ import { auth } from "../firebase-config";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
 
-import AddNewGolferToDatabase from '../utilities.js/AddNewGolferToDatabase'
-import RedirectWhenLoggedOrNotLogged from '../utilities.js/RedirectWhenLoggedOrNotLogged'
-
+import AddNewGolferToDatabase from '../utilities/AddNewGolferToDatabase'
+import RedirectWhenLoggedOrNotLogged from '../utilities/RedirectWhenLoggedOrNotLogged'
+import LoggedInOrNot from '../utilities/LoggedInOrNot';
 
 function Joinpage() {
+    const navigate = useNavigate();
 
-    RedirectWhenLoggedOrNotLogged(auth, '/home', false)
+   // RedirectWhenLoggedOrNotLogged( '/home', false)
 
+   const [isUserLoggedIn, setIsUserLoggedIn] = useState(null);
+
+   useEffect(()=>{
+     setIsUserLoggedIn(LoggedInOrNot())
+   },[])
+   
+   if (!isUserLoggedIn) {
+     console.log('%c user is not logged in !', 'color: red; font-size: 20px;')
+     //  navigate('/login')
+     } else{
+       console.log('%c user is logged in !', 'color: green; font-size: 20px;')
+     navigate('/home')
+
+   }
+ 
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -30,7 +46,9 @@ function Joinpage() {
             .required('Password is required'),
     });
 
+    const [joinLoading, setJoinLoading] = useState(false);
     const HandleJoin = async () => {
+        setJoinLoading(true);
 
 
         var user = {
@@ -46,7 +64,7 @@ function Joinpage() {
         const isValid = await userSchema.validate(user).catch(err => setErrorMessage(err.errors[0]))
         
 
-        if (!isValid) return;
+        if (!isValid) {setJoinLoading(false);  return}
         else setErrorMessage('')
 
         //add user to firebase
@@ -62,11 +80,18 @@ function Joinpage() {
 
             localStorage.setItem('isLogged', true);
 
-        } catch (error) {
+            //reload the page to update the state
+            navigate('/home');
+            window.location.reload();
+            
+                } catch (error) {
             if (error.message == 'Firebase: Error (auth/email-already-in-use).') { setErrorMessage('Email is already used for another account'); }
 
             console.log(error.message);
 
+        }
+        finally {
+            setJoinLoading(false); 
         }
 
 
@@ -104,9 +129,13 @@ function Joinpage() {
                             <label className="form-check-label inline-block text-gray-800 text-left" htmlFor="exampleCheck25">Remember me</label>
                         </div>
                         <p className="text-red-500 text-xs text-center mb-1">{errorMessage}</p>
-                        <button onClick={() => {HandleJoin()}} className=" w-full px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Sign up</button>
+                        <button 
+                        style={{opacity: joinLoading ? '0.5': '1'}}
+                        onClick={() => {
+                            HandleJoin()
+                            }} className=" w-full px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Sign up</button>
                         <p className="text-gray-800 mt-6 text-center">Already a member? <a href="#!"
-                            className="text-blue-600 hover:text-blue-700 focus:text-blue-700 transition duration-200 ease-in-out">Login</a>
+                            className="text-blue-600 hover:text-blue-700 focus:text-blue-700 transition duration-200 ease-in-out" onClick={()=>{navigate('/login');}}>Login</a>
                         </p>
                     </div>
                 </div>

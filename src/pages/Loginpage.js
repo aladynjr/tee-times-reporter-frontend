@@ -1,12 +1,29 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import * as yup from 'yup';
 import { auth, db } from "../firebase-config";
 import {signInWithEmailAndPassword} from "firebase/auth";
-import RedirectWhenLoggedOrNotLogged from '../utilities.js/RedirectWhenLoggedOrNotLogged'
-
+import RedirectWhenLoggedOrNotLogged from '../utilities/RedirectWhenLoggedOrNotLogged'
+import { useNavigate } from 'react-router-dom';
+import LoggedInOrNot from '../utilities/LoggedInOrNot';
 function LoginPage() {
+  const navigate = useNavigate();
 
-  RedirectWhenLoggedOrNotLogged(auth, '/home', false)
+ // RedirectWhenLoggedOrNotLogged( '/home', false)
+
+ const [isUserLoggedIn, setIsUserLoggedIn] = useState(null);
+
+ useEffect(()=>{
+   setIsUserLoggedIn(LoggedInOrNot())
+ },[])
+ 
+ if (!isUserLoggedIn) {
+   console.log('%c user is not logged in !', 'color: red; font-size: 20px;')
+     //navigate('/login')
+   } else{
+     console.log('%c user is logged in !', 'color: green; font-size: 20px;')
+     navigate('/home')
+
+ }
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -22,8 +39,9 @@ function LoginPage() {
   });
 
 
-
+const [loginLoading, setLoginLoading] = useState(false);
   const HandleLogin = async () => {
+    setLoginLoading(true);
     var user = {
       email: email,
       password: password,
@@ -35,7 +53,7 @@ function LoginPage() {
 
     console.log(isValid)
 
-    if (!isValid) return;
+    if (!isValid) {setLoginLoading(false); return}
     else setErrorMessage('')
 
     try {
@@ -48,6 +66,8 @@ function LoginPage() {
       console.log(user.user.uid + '  logged in ') 
       //localStorage.clear();
       localStorage.setItem('isLogged', 'true');
+      navigate('/home');
+
       // history.push("/Home")
       //window.location.reload()
       //navigate('/Home')
@@ -57,6 +77,9 @@ function LoginPage() {
       if (error.message == 'Firebase: Error (auth/invalid-email).') { setErrorMessage('Please re-check the e-mail'); }
       if (error.message == 'Firebase: Error (auth/wrong-password).') {setErrorMessage('Wrong password');}
       if(error.message == 'Firebase: Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later. (auth/too-many-requests).'){setErrorMessage('Access to this account is temporarily disabled');}
+    }
+    finally {
+      setLoginLoading(false);
     }
 
   }
@@ -88,9 +111,11 @@ function LoginPage() {
                 password?</a>
             </div>
             <p className="text-red-500 text-xs text-center mb-1">{errorMessage}</p>
-            <button onClick={() => HandleLogin()} className=" w-full px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Sign in</button>
+            <button 
+            style={{opacity: loginLoading ? '0.5' : '1'}}
+            onClick={() => HandleLogin()} className=" w-full px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Sign in</button>
             <p className="text-gray-800 mt-6 text-center">Not a member? <a href="#!"
-              className="text-blue-600 hover:text-blue-700 focus:text-blue-700 transition duration-200 ease-in-out">Register</a>
+              className="text-blue-600 hover:text-blue-700 focus:text-blue-700 transition duration-200 ease-in-out" onClick={()=>{navigate('/join');}} >Register</a>
             </p>
           </div>
         </div>
