@@ -21,20 +21,20 @@ function Homepage() {
         navigate("/")
 
     };
-  //  RedirectWhenLoggedOrNotLogged( false, '/')
+    //  RedirectWhenLoggedOrNotLogged( false, '/')
 
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(null);
+    const [isUserLoggedIn, setIsUserLoggedIn] = useState(null);
 
-  useEffect(()=>{
-    setIsUserLoggedIn(LoggedInOrNot())
-  },[])
+    useEffect(() => {
+        setIsUserLoggedIn(LoggedInOrNot())
+    }, [])
 
-  if (!isUserLoggedIn) {
-  //  console.log('%c user is not logged in !', 'color: red; font-size: 20px;')
-      navigate('/login')
-    } else{
-    //  console.log('%c user is logged in !', 'color: green; font-size: 20px;')
-  }
+    if (!isUserLoggedIn) {
+        //  console.log('%c user is not logged in !', 'color: red; font-size: 20px;')
+        navigate('/login')
+    } else {
+        //  console.log('%c user is logged in !', 'color: green; font-size: 20px;')
+    }
 
     const [golferUUID, setGolferUUID] = useState(null)
     const [golferData, setGolferData] = useState(null)
@@ -95,18 +95,22 @@ function Homepage() {
     console.log({ selectedCourse })
 
 
-    const [preferences, setPreferences] = useState(null)
+    const [preferences, setPreferences] = useState({})
     useEffect(() => {
         if (!selectedCourse) return;
         var preferences = {}
         selectedCourse.course_fields_and_options.forEach(fieldAndOptions => {
             console.log(fieldAndOptions)
             //check if we have a field where an option is always fixed and not changeable for the users(for example: booking class in the first golf course)
-            if(fieldAndOptions?.field_fixed_option){
+            if (fieldAndOptions?.field_fixed_option) {
                 preferences[fieldAndOptions.field_name] = fieldAndOptions.field_fixed_option
                 return;
             }
-            preferences[fieldAndOptions.field_name] = fieldAndOptions.field_options[0].option_name
+            preferences[fieldAndOptions.field_name] = fieldAndOptions.field_options?.[0]?.option_name
+            //if field is start_time set it to 00, if field is end_time set it to 23
+            if (fieldAndOptions.field_name == 'start_time') preferences[fieldAndOptions.field_name] = '6'
+            if (fieldAndOptions.field_name == 'end_time') preferences[fieldAndOptions.field_name] = '17'
+
         })
         setPreferences(preferences)
 
@@ -122,9 +126,9 @@ function Homepage() {
         for (var i = 0; i < 7; i++) {
             //convert date to 2023-01-27
             //date = date.split('-')[1] + "-" + date.split('-')[0] + "-" + date.split('-')[2]
-           // console.log(date)
-            var newDate = new Date(date.split('-')[2],date.split('-')[0]-1,date.split('-')[1] )
-          // var newDate = new Date(date.split('-')[0],date.split('-')[1]-1,date.split('-')[2] )
+            // console.log(date)
+            var newDate = new Date(date.split('-')[2], date.split('-')[0] - 1, date.split('-')[1])
+            // var newDate = new Date(date.split('-')[0],date.split('-')[1]-1,date.split('-')[2] )
             newDate.setDate(newDate.getDate() + i)
 
             //output in form of 01-28-2023
@@ -168,13 +172,17 @@ function Homepage() {
 
     }
 
+
+
+
+
     return (
         <div style={{ backgroundColor: '#fafafa' }} >
             {golferData && <div>
                 {/* Homepage: YOU ARE LOGGED IN ! {golferData.golfer_first_name} */}
                 {/* <img src={selectedCourse?.course_image} alt="" className="w-full object-cover  absolute" style={{maxHeight:'500px'}} /> */}
                 <div className="flex justify-center">
-                    <div className="block p-6 pt-4 rounded-lg shadow-lg bg-white mt-20  " style={{ width: '90%', maxWidth: '540px', zIndex: '1', background: 'linear-gradient(0deg, #ffffff 92%, #16a34a 40%)' }}>
+                    <div className="block p-6 pt-4 rounded-lg shadow-lg bg-white mt-20  " style={{ width: '90%', maxWidth: '540px', zIndex: '1', background: 'linear-gradient(0deg, #ffffff 91%, #16a34a 40%)' }}>
                         <h5 className="text-gray-900 text-white text-xl leading-tight  mb-2 flex items-center content-center " style={{ marginTop: '4px', fontWeight: '300' }}><IoTimeSharp style={{ marginRight: '12px' }} /> Create a Tee Time Alert </h5>
 
                         <div className='options  mt-12' >
@@ -205,6 +213,53 @@ function Homepage() {
                                         return null
                                     }
 
+                                    if ((fieldAndOptions.field_name == 'start_time') || fieldAndOptions.field_name == 'end_time') {
+                                        //create an array that contains from 00 to 23 
+                                        let hours = []
+                                        for (let i = 6; i <= 17; i++) {
+                                            hours.push(i)
+                                        }
+
+                                        return (
+                                            <div key={i} className='mb-4 flex items-center pt-1 pb-5' style={{ borderBottom: '#e7e4e4 1px solid' }} >
+                                                <label className="block  text-lg text-gray-700 whitespace-nowrap "  >{fieldAndOptions.field_fullname}</label>
+                                                <select 
+                                                onChange={(e) => {
+                                                    var newPreferences = preferences
+                                                    newPreferences[fieldAndOptions.field_name] = e.target.value
+                                                    setPreferences(newPreferences)
+                                                    console.log({ preferences })
+                                                    //forceUpdate()
+                                                }} 
+                                                name={fieldAndOptions.field_name} 
+                                                className="  block w-full px-3 py-1.5 text-lg font-semibold text-gray-900 bg-white bg-clip-padding cursor-pointer outline-none " 
+                                                defaultValue={preferences[fieldAndOptions.field_name]}
+                                                >
+                                               
+                                                {hours.map((hour, i) => {
+                                                    var displayHour = hour
+                                                    //change hour to am or pm 
+                                                    if (hour > 12) {
+                                                        displayHour = hour - 12 + ':00 PM'
+                                                    } else {
+                                                        displayHour = hour + ':00 AM'
+                                                    }
+
+                                                      return  <option
+                                                            value={hour}
+
+                                                        >{displayHour}</option>
+                                                })
+                                                
+                                            }
+                                            </select>
+
+
+
+                                            </div>)
+                                    }
+
+
                                     return (<div key={i} className='mb-4 flex items-center pt-1 pb-5' style={{ borderBottom: '#e7e4e4 1px solid' }} >
                                         <label className="block  text-lg text-gray-700 whitespace-nowrap ">{fieldAndOptions.field_fullname}</label>
                                         <select
@@ -221,7 +276,7 @@ function Homepage() {
                                             className="  block w-full px-3 py-1.5 text-lg font-semibold text-gray-900 bg-white bg-clip-padding cursor-pointer outline-none "
                                             aria-label="Default select example">
                                             {/* <option >{fieldAndOptions.field_fullname}</option> */}
-                                            {fieldAndOptions.field_options.map((option, i) => {
+                                            {fieldAndOptions?.field_options.map((option, i) => {
                                                 var showThisOption = true
                                                 var optionConditions = option?.conditions
 
@@ -246,7 +301,7 @@ function Homepage() {
                                                     return GenerateDatesDuring7Days(option.option_name).map((date, i) => {
                                                         return <option key={i} value={date} >{
                                                             //show date in legible format
-                                                            new Date(date).toLocaleDateString('en-US',{
+                                                            new Date(date).toLocaleDateString('en-US', {
                                                                 weekday: 'long', // long, short, narrow
                                                                 year: 'numeric', // numeric, 2-digit
                                                                 month: 'long', // numeric, 2-digit, long, short, narrow
@@ -263,7 +318,7 @@ function Homepage() {
 
                                             })}
 
-                                            
+
                                         </select>
 
                                     </div>)
@@ -306,13 +361,14 @@ function Homepage() {
                                 var cleanedKey = key.replace(/_/g, ' ')
                                 cleanedKey = cleanedKey.charAt(0).toUpperCase() + cleanedKey.slice(1)
 
-                            
-                                    
-                                    var date = new Date(golferData.golfer_preferences[key].split('-')[2],golferData.golfer_preferences[key].split('-')[0]-1,golferData.golfer_preferences[key].split('-')[1] )
+
+
+                                var date = new Date(golferData.golfer_preferences[key])
 
 
                                 return <div key={i} className="flex  items-center mb-4 mb-4   pb-3" style={{ borderBottom: '#e7e4e4 1px solid', marginTop: '-5px' }}>
-                                    <div className='capitalize'>{cleanedKey} </div> <div className='font-semibold ml-2 capitalize' > {golferData.golfer_preferences[key]} </div>
+                                    <div className='capitalize'>{cleanedKey} </div> 
+                                    <div className='font-semibold ml-2 capitalize' > {golferData.golfer_preferences[key]}{(key=='start_time' || key=='end_time') && ':00' } </div>
 
 
 
@@ -344,14 +400,14 @@ function Homepage() {
                 </div>
 
                 <button type="button"
-                onClick={() => {
+                    onClick={() => {
 
-                    logout()
+                        logout()
 
-                }}
-                data-bs-dismiss="modal"
-                className="px-3 py-1 m-6 bg-red-900 ml-6 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out ml-1">
-                LOGOUT</button>
+                    }}
+                    data-bs-dismiss="modal"
+                    className="px-3 py-1 m-6 bg-red-900 ml-6 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out ml-1">
+                    LOGOUT</button>
 
             </div>}
 
@@ -419,11 +475,11 @@ function Homepage() {
                         </div>
                     </div>
                 </div>
-              
+
             </div>
 
 
-       
+
         </div>
     )
 }

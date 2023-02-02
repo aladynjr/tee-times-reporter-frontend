@@ -17,10 +17,10 @@ function LoginPage() {
  },[])
  
  if (!isUserLoggedIn) {
-   console.log('%c user is not logged in !', 'color: red; font-size: 20px;')
+  // console.log('%c user is not logged in !', 'color: red; font-size: 20px;')
      //navigate('/login')
    } else{
-     console.log('%c user is logged in !', 'color: green; font-size: 20px;')
+    // console.log('%c user is logged in !', 'color: green; font-size: 20px;')
      navigate('/home')
 
  }

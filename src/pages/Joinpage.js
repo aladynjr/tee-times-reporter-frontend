@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import AddNewGolferToDatabase from '../utilities/AddNewGolferToDatabase'
 import RedirectWhenLoggedOrNotLogged from '../utilities/RedirectWhenLoggedOrNotLogged'
 import LoggedInOrNot from '../utilities/LoggedInOrNot';
+import "yup-phone";
 
 function Joinpage() {
     const navigate = useNavigate();
@@ -20,10 +21,10 @@ function Joinpage() {
    },[])
    
    if (!isUserLoggedIn) {
-     console.log('%c user is not logged in !', 'color: red; font-size: 20px;')
+    // console.log('%c user is not logged in !', 'color: red; font-size: 20px;')
      //  navigate('/login')
      } else{
-       console.log('%c user is logged in !', 'color: green; font-size: 20px;')
+      // console.log('%c user is logged in !', 'color: green; font-size: 20px;')
      navigate('/home')
 
    }
@@ -32,15 +33,18 @@ function Joinpage() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
+    const  [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
 
     const [errorMessage, setErrorMessage] = useState('')
 
+
     let userSchema = yup.object().shape({
         firstName: yup.string().required('First name is required'),
         lastName: yup.string().required('Last name is required'),
         email: yup.string().email().required('Email is required'),
+        phoneNumber: yup.string().phone('USA', false, 'Phone number must be a valid US number').required('Phone number is required'),
         password: yup.string()
             .min(6, 'Password must be at least 6 characters')
             .required('Password is required'),
@@ -55,6 +59,7 @@ function Joinpage() {
             firstName: firstName,
             lastName: lastName,
             email: email,
+            phoneNumber: phoneNumber,
             password: password,
             rememberMe: rememberMe
         }
@@ -67,6 +72,7 @@ function Joinpage() {
         if (!isValid) {setJoinLoading(false);  return}
         else setErrorMessage('')
 
+        console.log('user is valid, creating account...')
         //add user to firebase
         try {
             const newUser = await createUserWithEmailAndPassword(
@@ -76,7 +82,7 @@ function Joinpage() {
             );
             console.log(newUser.user);
 
-            await AddNewGolferToDatabase(firstName, lastName , email, newUser.user.uid)
+            await AddNewGolferToDatabase(firstName, lastName , email,phoneNumber, newUser.user.uid)
 
             localStorage.setItem('isLogged', true);
 
@@ -88,6 +94,7 @@ function Joinpage() {
             if (error.message == 'Firebase: Error (auth/email-already-in-use).') { setErrorMessage('Email is already used for another account'); }
 
             console.log(error.message);
+            setJoinLoading(false); 
 
         }
         finally {
@@ -115,6 +122,14 @@ function Joinpage() {
                         <div className="form-group mb-6">
                             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="exampleInput125"
                                 placeholder="Email address" />
+                        </div>
+                        <div className="form-group mb-6">
+                            <input type="tel" value={phoneNumber} onChange={
+                                (e) => setPhoneNumber((e.target.value)?.replace(/\s/g, ''))
+                                
+                            
+                            } className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="exampleInput125"
+                                placeholder="Phone Number" />
                         </div>
                         <div className="form-group mb-6">
                             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="exampleInput126"
