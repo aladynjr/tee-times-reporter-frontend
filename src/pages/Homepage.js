@@ -51,7 +51,7 @@ function Homepage() {
             const response = await fetch(`${globalVal.host}/api/golfer/uuid/${golferUUID}`);
             var jsonData = await response.json();
 
-            if(jsonData?.golfer_preferences_list?.length){
+            if (jsonData?.golfer_preferences_list?.length) {
                 //golfer_preferences_list is an array ocntains json objects, loop through and parse each object
                 var preferences = []
                 for (let i = 0; i < jsonData.golfer_preferences_list.length; i++) {
@@ -102,7 +102,7 @@ function Homepage() {
         const selectedCourse = courses.find(course => course.course_id == selectedCourseID)
         setSelectedCourse(selectedCourse)
     }, [selectedCourseID])
-   // console.log({ selectedCourse })
+    // console.log({ selectedCourse })
 
 
     const [preferences, setPreferences] = useState({})
@@ -111,7 +111,7 @@ function Homepage() {
         if (!selectedCourse) return;
         var preferences = {}
         selectedCourse.course_fields_and_options.forEach(fieldAndOptions => {
-            console.log(fieldAndOptions)
+
             //check if we have a field where an option is always fixed and not changeable for the users(for example: booking class in the first golf course)
             if (fieldAndOptions?.field_fixed_option) {
                 preferences[fieldAndOptions.field_name] = fieldAndOptions.field_fixed_option
@@ -123,11 +123,11 @@ function Homepage() {
             if (fieldAndOptions.field_name == 'end_time') preferences[fieldAndOptions.field_name] = '17'
             if (fieldAndOptions.field_name == 'date') {
                 var date = fieldAndOptions.field_options?.[0]?.option_name
-              
-                preferences[fieldAndOptions.field_name] = date.split('-')[2]+'-'+(date.split('-')[0]).toString().padStart(2, '0')+'-'+ date.split('-')[1].toString().padStart(2, '0')
+
+                preferences[fieldAndOptions.field_name] = date.split('-')[2] + '-' + (date.split('-')[0]).toString().padStart(2, '0') + '-' + date.split('-')[1].toString().padStart(2, '0')
             }
 
-          
+
 
         })
         setPreferences(preferences)
@@ -190,10 +190,28 @@ function Homepage() {
 
     }
 
+    const CheckForDuplicateAlerts = () => {
+        setAddNewAlertError('')
+        var golferPreferencesList = golferData?.golfer_preferences_list
+
+        //check that none of the preferences are the same as preferences state without comparing each element in the object
+        var duplicateFound = false
+        golferPreferencesList?.forEach((golferPreference) => {
+            if (JSON.stringify(golferPreference) === JSON.stringify(preferences)) duplicateFound = true
+        }
+        )
+       
+        return duplicateFound
+
+
+    }
+
     const [addNewAlertLoading, setAddNewAlertLoading] = useState(false)
     const [addNewAlertError, setAddNewAlertError] = useState('')
 
     const AddNewAlertPreferences = async (golfer_id, preferences) => {
+
+
         //setAddNewAlertLoading(true)
         setAddNewAlertError('')
 
@@ -208,8 +226,8 @@ function Homepage() {
             })
             console.log('%c alert preferences added successfully ', 'color: green')
 
-            FetchGolferData()
-            forceUpdate()
+             FetchGolferData()
+        //    forceUpdate()
 
         }
         catch (e) {
@@ -218,45 +236,47 @@ function Homepage() {
             setAddNewAlertError(e.message)
         }
         finally {
-          // setAddNewAlertLoading(false)
+            // setAddNewAlertLoading(false)
         }
     }
 
 
-const [reachedAlertsCap, setReachedAlertsCap] = useState(false)
-useEffect(()=>{
-    if(golferData?.golfer_preferences_list?.length >= 5) setReachedAlertsCap(true)
-    else setReachedAlertsCap(false)
-},[golferData?.golfer_preferences_list?.length])
+    const [reachedAlertsCap, setReachedAlertsCap] = useState(false)
+    useEffect(() => {
+        if (golferData?.golfer_preferences_list?.length >= 5) setReachedAlertsCap(true)
+        else setReachedAlertsCap(false)
+    }, [golferData?.golfer_preferences_list?.length])
 
-var selectedAlertPreferences;
+    var selectedAlertPreferences;
 
-const DeleteAlertPreferences = async (golfer_id, preferences) => {
-    try {
-        let response = await fetch(`${globalVal.host}/api/golfer/preferences/delete`, {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id: golfer_id, preferences: preferences })
-        })
-        console.log('%c alert preferences deleted successfully ', 'color: green')
+    const DeleteAlertPreferences = async (golfer_id, preferences) => {
+        try {
+            let response = await fetch(`${globalVal.host}/api/golfer/preferences/delete`, {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id: golfer_id, preferences: preferences })
+            })
+            console.log('%c alert preferences deleted successfully ', 'color: green')
 
-        FetchGolferData()
-        forceUpdate()
+            FetchGolferData()
+            forceUpdate()
+
+        }
+        catch (e) {
+            console.log("error when trying to delete alert preferences ")
+            console.log(e.message)
+        }
+        finally {
+            // setAddNewAlertLoading(false)
+        }
+
 
     }
-    catch (e) {
-        console.log("error when trying to delete alert preferences ")
-        console.log(e.message)
-    }
-    finally {
-        // setAddNewAlertLoading(false)
-    }
 
 
-}
     return (
         <div style={{ backgroundColor: '#fafafa' }} >
             {golferData && <div>
@@ -382,7 +402,7 @@ const DeleteAlertPreferences = async (golfer_id, preferences) => {
                                                     return GenerateDatesDuring7Days(option.option_name).map((date, i) => {
                                                         return <option key={i} value={date} >{
                                                             //show date in legible format
-                                                            new Date(date)?.toLocaleDateString('en-US', {
+                                                            new Date(date.toLocaleString('en-US', { timeZone: 'UTC' })).toLocaleDateString('en-US', {
                                                                 weekday: 'long', // long, short, narrow
                                                                 year: 'numeric', // numeric, 2-digit
                                                                 month: 'long', // numeric, 2-digit, long, short, narrow
@@ -414,15 +434,17 @@ const DeleteAlertPreferences = async (golfer_id, preferences) => {
                                          }}*/
 
                                         data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                        style={{ opacity: addNewAlertLoading ? '0.5' : '1',
-                                         backgroundColor: reachedAlertsCap && '#e7e4e4',
-                                          color: reachedAlertsCap && '#a8a8a8',
-                                           pointerEvents: reachedAlertsCap && 'none' }}
+                                        style={{
+                                            opacity: addNewAlertLoading ? '0.5' : '1',
+                                            backgroundColor: reachedAlertsCap && '#e7e4e4',
+                                            color: reachedAlertsCap && '#a8a8a8',
+                                            pointerEvents: reachedAlertsCap && 'none'
+                                        }}
                                         className="inline-block px-10 py-4 bg-green-600 text-white font-medium text-sm leading-tight uppercase rounded shadow-md hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg transition duration-150 ease-in-out w-[100%] mb-2">
                                         Create Alert
                                     </button>
                                 </div>
-                                         {addNewAlertError && <p className="text-red-400 text-sm text-center mb-6"> {addNewAlertError} </p>}
+                                {addNewAlertError && <p className="text-red-400 text-sm text-center mb-6"> {addNewAlertError} </p>}
                                 {reachedAlertsCap && <p className="text-gray-600  text-sm mb-6">
                                     Maximum number of active alerts attained, please delete an alert to create a new one
                                 </p>}
@@ -432,11 +454,11 @@ const DeleteAlertPreferences = async (golfer_id, preferences) => {
                     </div>
                 </div>
 
-                
 
-                {!golferData?.golfer_preferences_list.length  && <div className="flex justify-center">
+
+                {!golferData?.golfer_preferences_list.length && <div className="flex justify-center">
                     <div className="block p-6 pt-4 rounded-lg shadow-lg bg-white mt-6 mb-64  " style={{ width: '90%', maxWidth: '540px', zIndex: '1' }}>
-                         <p className="text-gray-500  text-lg flex content-center " style={{ margin: 'auto', marginBlock: '18px' }}>
+                        <p className="text-gray-500  text-lg flex content-center " style={{ margin: 'auto', marginBlock: '18px' }}>
                             You have not created any alerts yet
                         </p>
                     </div>
@@ -445,61 +467,63 @@ const DeleteAlertPreferences = async (golfer_id, preferences) => {
 
 
                 {golferData?.golfer_preferences_list.length && <div className="flex justify-center flex-col items-center mt-12 mb-64">
-                { golferData?.golfer_preferences_list.map((alertPreferences) => {
-                    return <div className="block p-6 pt-4 rounded-lg shadow-lg bg-white mt-12  " style={{ width: '90%', maxWidth: '400px', zIndex: '1' }}>
-                    
-                     <div className='flex flex-col'>
-                        
-                        <h5 className="text-gray-500 text-xl leading-tight font-medium mb-8">Active Alert</h5>
-                        {/* {alertPreferences} */}
+                    {golferData?.golfer_preferences_list.map((alertPreferences) => {
+                        return <div className="block p-6 pt-4 rounded-lg shadow-lg bg-white mt-12  " style={{ width: '90%', maxWidth: '400px', zIndex: '1' }}>
 
-                        {Object.keys(alertPreferences).map((key, i) => {
-                            //make key first letter uppercase, and if there's a _ replace it with a space
-                            var cleanedKey = key.replace(/_/g, ' ')
-                            cleanedKey = cleanedKey.charAt(0).toUpperCase() + cleanedKey.slice(1)
+                            <div className='flex flex-col'>
 
+                                <h5 className="text-gray-500 text-xl leading-tight font-medium mb-8">Active Alert</h5>
+                                {/* {alertPreferences} */}
 
-
-                            var date = new Date(alertPreferences[key])
-
-
-                            return <div key={i} className="flex  items-center mb-4 mb-4   pb-3" style={{ borderBottom: '#e7e4e4 1px solid', marginTop: '-5px' }}>
-                                <div className='capitalize'>{cleanedKey} </div>
-                                <div className='font-semibold ml-2 capitalize' > {alertPreferences[key]}{(key == 'start_time' || key == 'end_time') && ':00'} </div>
+                                {Object.keys(alertPreferences).map((key, i) => {
+                                    //make key first letter uppercase, and if there's a _ replace it with a space
+                                    var cleanedKey = key.replace(/_/g, ' ')
+                                    cleanedKey = cleanedKey.charAt(0).toUpperCase() + cleanedKey.slice(1)
 
 
 
-                                {key == "date" && <span className="text-gray-500 text-xs ml-2">({date.toLocaleDateString("en-US", {
-                                    weekday: 'long', // long, short, narrow
-                                    year: 'numeric', // numeric, 2-digit
-                                    month: 'long', // numeric, 2-digit, long, short, narrow
-                                    day: 'numeric' // numeric, 2-digit
-                                })})</span>}
+                                    var date = new Date(alertPreferences[key])
+
+
+                                    return <div key={i} className="flex  items-center mb-4 mb-4   pb-3" style={{ borderBottom: '#e7e4e4 1px solid', marginTop: '-5px' }}>
+                                        <div className='capitalize'>{cleanedKey} </div>
+                                        <div className='font-semibold ml-2 capitalize' > {alertPreferences[key]}{(key == 'start_time' || key == 'end_time') && ':00'} </div>
 
 
 
+                                        {key == "date" && <span className="text-gray-500 text-xs ml-2">({
+                                        new Date(date.toLocaleString('en-US', { timeZone: 'UTC' })).toLocaleDateString('en-US', {
+                                            weekday: 'long', // long, short, narrow
+                                            year: 'numeric', // numeric, 2-digit
+                                            month: 'long', // numeric, 2-digit, long, short, narrow
+                                            day: 'numeric' // numeric, 2-digit
+                                        })
+                                       })</span>}
+
+
+
+                                    </div>
+                                })}
+
+                                <div className="flex space-x-2 justify-center mt-4 mb-3">
+                                    <button type="button"
+                                        onClick={() => {
+                                            //  UpdateGolferRecord(golferData.golfer_id, ["golfer_preferences"], [JSON.stringify(preferences)])
+                                            selectedAlertPreferences = alertPreferences
+                                        }}
+
+                                        data-bs-toggle="modal" data-bs-target="#exampleModal2"
+                                        className="inline-block px-10 py-2 bg-red-600 text-white font-medium text-sm leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out w-[100%] mb-2">
+                                        Delete Alert
+                                    </button>
+                                </div>
                             </div>
-                        })}
 
-                        <div className="flex space-x-2 justify-center mt-4 mb-3">
-                            <button type="button"
-                                onClick={() => {
-                                   //  UpdateGolferRecord(golferData.golfer_id, ["golfer_preferences"], [JSON.stringify(preferences)])
-                                   selectedAlertPreferences = alertPreferences
-                                 }}
 
-                                data-bs-toggle="modal" data-bs-target="#exampleModal2"
-                                className="inline-block px-10 py-2 bg-red-600 text-white font-medium text-sm leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out w-[100%] mb-2">
-                                Delete Alert
-                            </button>
                         </div>
-                    </div>
 
+                    })}
 
-                </div>
-
-})}
-                    
                 </div>}
 
 
@@ -540,9 +564,13 @@ const DeleteAlertPreferences = async (golfer_id, preferences) => {
                             <button type="button" className="px-6 py-2.5 bg-gray-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-gray-700 hover:shadow-lg focus:bg-gray-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-gray-800 active:shadow-lg transition duration-150 ease-in-out opacity-80" data-bs-dismiss="modal">Close</button>
                             <button type="button"
                                 onClick={() => {
+                                    if (CheckForDuplicateAlerts()) {
 
-                                   // UpdateGolferRecord(golferData.golfer_id, ["golfer_preferences"], [JSON.stringify(preferences)])
-                                   AddNewAlertPreferences(golferData.golfer_id, (preferences))
+                                        return;
+                                    }
+
+                                    // UpdateGolferRecord(golferData.golfer_id, ["golfer_preferences"], [JSON.stringify(preferences)])
+                                    AddNewAlertPreferences(golferData.golfer_id, (preferences))
 
                                 }}
                                 data-bs-dismiss="modal"
@@ -574,9 +602,9 @@ const DeleteAlertPreferences = async (golfer_id, preferences) => {
                             <button type="button"
                                 onClick={() => {
 
-                                   // UpdateGolferRecord(golferData.golfer_id, ["golfer_preferences"], ['null'])
+                                    // UpdateGolferRecord(golferData.golfer_id, ["golfer_preferences"], ['null'])
 
-                                   DeleteAlertPreferences(golferData.golfer_id, selectedAlertPreferences)
+                                    DeleteAlertPreferences(golferData.golfer_id, selectedAlertPreferences)
 
                                 }}
                                 data-bs-dismiss="modal"

@@ -64,9 +64,14 @@ const [loginLoading, setLoginLoading] = useState(false);
         password
       );
       console.log(user.user.uid + '  logged in ') 
-      //localStorage.clear();
-      localStorage.setItem('isLogged', 'true');
-      navigate('/home');
+
+        //localStorage.clear();
+        localStorage.setItem('isUserLoggedIn', 'true');
+        navigate('/home');
+        
+      setIsUserLoggedIn(LoggedInOrNot())
+
+    
 
       // history.push("/Home")
       //window.location.reload()
