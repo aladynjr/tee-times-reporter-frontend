@@ -93,6 +93,7 @@ function Homepage() {
         FetchCoursesData()
     }, [])
 
+    console.log({courses})
 
     const [selectedCourseID, setSelectedCourseID] = useState(null)
 
@@ -123,8 +124,7 @@ function Homepage() {
             if (fieldAndOptions.field_name == 'end_time') preferences[fieldAndOptions.field_name] = '17'
             if (fieldAndOptions.field_name == 'date') {
                 var date = fieldAndOptions.field_options?.[0]?.option_name
-
-                preferences[fieldAndOptions.field_name] = date.split('-')[2] + '-' + (date.split('-')[0]).toString().padStart(2, '0') + '-' + date.split('-')[1].toString().padStart(2, '0')
+                 preferences[fieldAndOptions.field_name] = date?.split('-')[2] + '-' + (date?.split('-')[0])?.toString().padStart(2, '0') + '-' + date?.split('-')[1]?.toString().padStart(2, '0')
             }
 
 
