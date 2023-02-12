@@ -83,43 +83,72 @@
     }
 }
 
-.hero-title {
+.hero-title, .alert-title {
     color: rgb(5, 68, 104);
     font-weight: 600;
     line-height: 76.8px;
     font-size: 3.75rem;
 }
+.alert-title {
+    font-size: 44px;
+}
 
 //when we're on mobile, hero title size becomes 34px
 @media (max-width: 1200px) {
-    .hero-title {
+    .hero-title, .alert-title {
         font-size: 36px;
         line-height: 120%;
         margin-top: 30px;
     }
+    .alert-title {
+        font-size: 31px;
+        margin-top: 40px;
+
+    }
+   
 }
 
-.hero-description{
+.hero-description ,.alert-description{
     color: rgb(113, 131, 165);
     font-weight: 400;
     font-size: 24px;
     line-height: 40px;
 }
 
+
+
 //on mobile, hero description size becomes 18px
 @media (max-width: 1200px) {
-    .hero-description {
+    .hero-description, .alert-description{
         font-weight: 500;
 font-size: 16px;
 line-height: 150%;
+    }
+    .alert-description{
+margin-top: 20px;
     }
     .hero-button-mobile{
        // margin-top: -5px;
     
     }
     .hero-section-mobile{
-        height:700px
+        height:750px;
     }
+    .alert-section-mobile{
+        height: 750px;
+        flex-direction: column;
+        }
 }
 
 
+.alert-form-select{
+    padding: 11px;
+    font-size: 14px;
+    color: rgba(113, 131, 165, 1);
+    border-radius: 12px;
+
+}
+.alert-form-select-label {
+    color: rgba(113, 131, 165, 1)
+
+}
