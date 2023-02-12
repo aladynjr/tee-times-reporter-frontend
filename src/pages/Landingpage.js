@@ -49,7 +49,7 @@ const navLinks = [
                 <li className="nav-item p-2" key={index}>
 
                   <a className="nav-link text-xs xl:text-sm 2xl:text-base   hover:text-green-500  transition duration-100 ease-in-out " href="#" >{link}</a>
-                        <span className="nav-line absolute bottom-0 bg-green-500  transition-all duration-200 ease-in-out" ></span>
+                        <span className="nav-line  bottom-0 bg-green-500  transition-all duration-200 ease-in-out" ></span>
 
                 </li>
               ))}
