@@ -8,6 +8,8 @@
 .App {
     //font-family: 'Inter', sans-serif;
     font-family: 'Urbanist', sans-serif;
+    padding-bottom: 200px;
+
 }
 
 .nav-link {
@@ -31,22 +33,24 @@
     position: absolute;
 }
 
-.nav-link:hover + .nav-line {
+.nav-link:hover+.nav-line {
     width: 25px;
 }
 
 @media (max-width: 1200px) {
     .nav-line {
         margin-bottom: 0;
-    display: flex;
-    margin-left: auto;
-    margin-right: 6px;
-    position: relative;
+        display: flex;
+        margin-left: auto;
+        margin-right: 6px;
+        position: relative;
     }
-    .nav-link:focus + .nav-line {
+
+    .nav-link:focus+.nav-line {
         width: 25px;
     }
 }
+
 //element with classname mobile-logo : hide when width is more than 1200px 
 .mobile-logo {
     display: none;
@@ -79,3 +83,44 @@
         margin-left: auto;
     }
 }
+
+.hero-title {
+    color: rgb(5, 68, 104);
+    font-weight: 600;
+    line-height: 76.8px;
+    font-size: 3.75rem;
+}
+
+//when we're on mobile, hero title size becomes 34px
+@media (max-width: 1200px) {
+    .hero-title {
+        font-size: 36px;
+        line-height: 120%;
+        margin-top: 30px;
+    }
+}
+
+.hero-description{
+    color: rgb(113, 131, 165);
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 40px;
+}
+
+//on mobile, hero description size becomes 18px
+@media (max-width: 1200px) {
+    .hero-description {
+        font-weight: 500;
+font-size: 16px;
+line-height: 150%;
+    }
+    .hero-button-mobile{
+       // margin-top: -5px;
+    
+    }
+    .hero-section-mobile{
+        height:700px
+    }
+}
+
+
