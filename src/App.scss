@@ -32,3 +32,33 @@ margin-inline: 5px;
 .nav-link:hover + .nav-line {
     width: 25px;
   }
+
+  //element with classname mobile-logo : hide when width is more than 1200px 
+    .mobile-logo{
+        display: none;
+    }
+    .desktop-logo{
+        display: block;
+    }
+    @media (max-width: 1200px) {
+        .mobile-logo{
+            display: block;
+        }
+        .desktop-logo{
+            display: none;
+        }
+    }
+
+    //only on mobile (when less than 1200px) mobile-list should have margin top of 20px
+    @media (max-width: 1200px) {
+        .mobile-nav-list{
+            margin-top: 21px;
+            text-align: right;
+        }
+        .mobile-cta-button{
+            display: flex;
+            margin-top: 21px;
+            margin-left: auto;
+        }
+    }
+
