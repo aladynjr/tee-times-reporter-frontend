@@ -4,7 +4,31 @@
 @tailwind utilities;
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@100;200;300;400;500;600;700;800;900&display=swap');
 .App{
-  font-family: 'Inter', sans-serif;
+ //font-family: 'Inter', sans-serif;
+ font-family: 'Urbanist', sans-serif;
 }
+
+.nav-link{
+    font-family: 'Urbanist';
+font-style: normal;
+font-weight: 700;
+line-height: 150%;
+/* identical to box height, or 24px */
+
+text-transform: uppercase;
+
+margin-inline: 5px;
+}
+.nav-line{
+    margin-bottom: 21px;
+    margin-left: 14px;
+    height: 3px;
+    width: 0px;
+    display: flex;
+    
+}
+.nav-link:hover + .nav-line {
+    width: 25px;
+  }
