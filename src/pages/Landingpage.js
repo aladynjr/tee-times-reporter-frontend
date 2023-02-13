@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { auth } from "../firebase-config";
 import Navbar from '../components/Navbar';
@@ -37,6 +37,17 @@ function Landingpage() {
       image: Guide4
     }
   ]
+//are we in resolution less than 1200px or not ? 
+const [mobile, setMobile] = useState(false)
+useEffect(()=>{
+  if (window.innerWidth < 1200) {
+    setMobile(true)
+  } else {
+    setMobile(false)
+  }
+},[window.innerWidth])
+
+
 
   return (
     <div style={{ background: '#F5F8FD' }}>
@@ -58,17 +69,17 @@ function Landingpage() {
         <div>
           {guideSteps.map((step, index) => {
             return (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', width: '90%', maxWidth: '1400px', margin: 'auto', paddingTop: '60px', flexDirection: ((index + 1) % 2 == 0) && 'row-reverse' }} className='flex-col-reverse xl:flex-row hero-section-mobile' >
-                <img src={step.image} alt="How it works" style={{ width: '90%', maxWidth: '400px', maxHeight: '30%' }} />
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', width: '90%', maxWidth: '1400px', margin: 'auto', paddingTop: '60px',height:'fit-content', flexDirection: (((index + 1) % 2 == 0) && !mobile) && 'row-reverse' }} className='flex-col-reverse xl:flex-row hero-section-mobile guide-section' >
+                <img src={step.image} alt="How it works" style={{ width: '90%', maxWidth: '400px', maxHeight: '30%', marginTop: mobile && index!=0 && '40px' }} />
 
 
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center' }} >
-                    <div className='guide-numbering' style={{width:'95px', marginLeft:'-20px', marginRight:'20px'}} >{'0' + (index + 1)}</div>
+                    <div className='guide-numbering'  >{'0' + (index + 1)}</div>
 
                     <div className=' alert-title ' style={{ fontSize: '34px', marginLeft: '-15px', marginBottom: '-15px' }} > {step.title} </div>
                   </div>
-                  <div className='alert-description' style={{ marginTop: '-22px', marginLeft: '80px', maxWidth: '500px' }}   >{step.description}</div>
+                  <div className=' guide-description'  >{step.description}</div>
                 </div>
 
 
