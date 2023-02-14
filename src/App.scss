@@ -209,3 +209,110 @@ margin-right: 20px;
 
 
 }
+
+.footer-slogan{
+    font-weight: 500;
+font-size: 20px;
+line-height: 161%;
+color: #FFFFFF;
+}
+
+.footer-links-title{
+    border-bottom-width: 3px;
+    border-color: green;
+    width: 25px;
+    white-space: nowrap;
+    font-size: 24px;
+    line-height: 120%;
+    color: white;
+    padding-bottom: 13px;
+    margin-bottom: 20px;
+}
+
+.footer-link{
+    font-family: 'Urbanist';
+font-style: normal;
+font-weight: 200;
+font-size: 18px;
+line-height: 140%;
+/* or 25px */
+max-width: 250px;
+padding-block: 10px;
+color: #FFFFFF;
+}
+
+.footer-wrapper{
+    display: flex;
+    flex-wrap: wrap;
+    width: 90%;
+    margin: auto;
+    justify-content: space-around;
+    max-width: 1200px;
+    border-bottom: 1px solid white;
+    padding-bottom: 35px;
+}
+
+.cart-shadow{
+    position: absolute;
+    right: 12%;
+    left: 70%;
+    width: 90%;
+    max-width: 470px;
+    margin: 266px -152px auto auto;
+    mix-blend-mode: multiply;
+}
+
+.cart{
+    position: absolute;
+    right: 5%;
+    left: 67%;
+    width: 90%;
+    max-width: 400px;
+    margin: 120px auto auto;
+}
+
+@media (max-width: 1200px) {
+    .cart{
+        right: 50%;
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: 201px;
+    margin: 288px auto auto;
+    }
+   .cart-shadow {
+    right: 50%;
+    left: 50%;
+        max-width: 205px;
+    margin: 383px -122px auto auto;
+   }
+   .footer-wrapper{
+    flex-direction: column;
+    height: 1250px;
+    width: fit-content;
+    margin: auto;
+    
+   }
+}
+.footer-column{
+    min-width: 200px;
+}
+//if screen size is more than 2000 px, cart shadow right becomes 14%
+@media (min-width: 2000px) {
+    .cart-shadow{
+        right: 14%;
+    }
+}
+@media (min-width: 3000px) {
+    .cart-shadow{
+        right: 16%;
+    }
+}
+
+@media (max-width: 600px) {
+    .cart{
+    margin: 328px auto auto;
+    }
+   .cart-shadow {
+    margin: 423px -122px auto auto;
+   }
+}
