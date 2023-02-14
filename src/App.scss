@@ -316,3 +316,42 @@ color: #FFFFFF;
     margin: 423px -122px auto auto;
    }
 }
+
+
+.insights-blob {
+    position: absolute;
+    width: 60%;
+    max-width: 726px;
+    left: 50%;
+    right: 50%;
+    transform: translateX(-50%);
+    margin-left: -500px;
+}
+
+.insights-wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 1200px) {
+    .insights-blob {
+        margin-left: -83px;
+    margin-top: 408px;
+    }
+    .insights-wrapper{
+        flex-direction: column-reverse;
+            margin-top: -150px;
+            height: 1070px;
+            justify-content: space-around;
+    }
+}
+
+@media (max-width: 700px){
+    .insights-blob {
+        margin-left: -83px;
+        margin-top: 514px;
+    }
+}
+
+
