@@ -2,8 +2,12 @@
 
 import React from 'react'
 import HeroIllustration from '../assets/images/hero.svg'
+import { useNavigate } from 'react-router-dom';
+
 
 function HeroSection() {
+  const navigate = useNavigate();
+
   return (
     <div>
               <div style={{ background: 'white', paddingBottom:'75px' }} >
@@ -19,7 +23,10 @@ function HeroSection() {
               className="inline-block px-6 py-2.5  text-white font-medium text-xs leading-tight bg-green-500 uppercase rounded  hover:bg-green-600 hover:shadow-lg  focus:shadow-lg 
               focus:outline-none focus:ring-0  active:shadow-lg transition duration-150 ease-in-out  hero-button-mobile"
               style={{ padding: '14px 28px', width: '202px', height: '52px', borderRadius: '12px', color: '#F5F8FD', fontSize: '16px', fontWeight: '700', lineHeight: '150%' }}
-            >SET UP ALERT NOW</button>
+           onClick={()=>{
+            navigate('/join')
+           }}
+           >SET UP ALERT NOW</button>
           </div>
 
           <img src={HeroIllustration} alt="hero" style={{ width: '90%', maxWidth: '500px', maxHeight: '50%' }} />

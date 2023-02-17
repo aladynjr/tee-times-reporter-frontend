@@ -1,8 +1,11 @@
 import React from 'react'
 import Logo from '../assets/images/logo.svg'
 import MenuIcon from '../assets/images/menu-icon.svg'
+import { useNavigate } from 'react-router-dom';
+
 
 function Navbar() {
+  const navigate = useNavigate();
 
     
 const navLinks = [
@@ -58,6 +61,9 @@ const navLinks = [
               className="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded  hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg 
               focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out mobile-cta-button"
               style={{ padding: '14px 28px', width: '202px', height: '52px', background: '#03314bcc', borderRadius: '12px', color: '#F5F8FD', fontSize: '16px', fontWeight: '700', lineHeight: '150%' }}
+              onClick={()=>{
+                navigate('/join')
+               }}
             >SET UP ALERT NOW</button>
             {/* <!-- Left links --> */}
           </div>

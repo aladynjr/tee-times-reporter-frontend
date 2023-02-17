@@ -153,7 +153,9 @@ function Homepage() {
             })
             console.log('%c alert preferences added successfully ', 'color: green')
             ShowNotification()
-            FetchGolferData()
+           const golferData = await FetchGolferData(golferUUID )
+            setGolferData(golferData)
+
 
         }
         catch (e) {
@@ -186,9 +188,9 @@ function Homepage() {
                 body: JSON.stringify({ id: golfer_id, preferences: preferences })
             })
             console.log('%c alert preferences deleted successfully ', 'color: green')
-
-            FetchGolferData()
-            forceUpdate()
+            const golferData = await FetchGolferData(golferUUID )
+            setGolferData(golferData)
+            
 
         }
         catch (e) {
@@ -259,9 +261,9 @@ useEffect(()=>{
 
     return (
         <div style={{ backgroundColor: '#fafafa' }} >
-            <button onClick={() => {
+            {/* <button onClick={() => {
                 ShowNotification()
-            }}> ALEEEEEEEEERT</button> 
+            }}> ALEEEEEEEEERT</button>  */}
             {showNotification && <div id="toast-top-right" 
             className="fixed flex items-center w-full max-w-xs p-4 text-white bg-blue-500 rounded-lg 
             shadow-xl top-5 right-5  z-10 animate__animated animate__fadeInDown animate__faster" role="alert">
