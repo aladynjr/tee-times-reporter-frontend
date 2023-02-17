@@ -2,6 +2,7 @@ import React, {Suspense} from 'react';
 import './App.scss';
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import lazy from "react-lazy-with-preload";
+import 'animate.css';
 
 const Homepage = lazy(() => import('./pages/Homepage'));
 const Loginpage = lazy(() => import('./pages/Loginpage'));

@@ -38,12 +38,14 @@ function Homepage() {
 
     const [golferUUID, setGolferUUID] = useState(null)
     const [golferData, setGolferData] = useState(null)
+    useEffect(() => {
+        onAuthStateChanged(auth, (currentUser) => {
+            if (currentUser) {
+                setGolferUUID(currentUser.uid)
+            }
+        });
 
-    onAuthStateChanged(auth, (currentUser) => {
-        if (currentUser) {
-            setGolferUUID(currentUser.uid)
-        }
-    });
+    }, [auth])
 
 
     useEffect(() => {
@@ -150,7 +152,7 @@ function Homepage() {
                 body: JSON.stringify({ id: golfer_id, preferences: preferences })
             })
             console.log('%c alert preferences added successfully ', 'color: green')
-
+            ShowNotification()
             FetchGolferData()
 
         }
@@ -229,30 +231,47 @@ function Homepage() {
 
     ]
 
-    const [showAlert, setShowAlert] = useState(false)
-    const ShowAlert = () => {
+    const [showNotification, setShowNotification] = useState(false)
 
-        setShowAlert(true)
+    const ShowNotification = () => {
+        setShowNotification(true)
+        clearTimeout()
+
         setTimeout(() => {
-            setShowAlert(false)
-        }, 3000);
-
-
+            setShowNotification(false)
+        }
+         , 5000)
     }
+
+
+useEffect(()=>{
+    if(!golferData?.golfer_id) return
+
+    //if preferences exist in session storage, add an alert with those preferenes then clear session storage 
+    if(sessionStorage.getItem('preferences')){
+        var preferences = JSON.parse(sessionStorage.getItem('preferences'))
+        AddNewAlertPreferences(golferData?.golfer_id, preferences)
+        sessionStorage.removeItem('preferences')
+    }
+
+
+},[golferData?.golfer_id])
 
     return (
         <div style={{ backgroundColor: '#fafafa' }} >
             <button onClick={() => {
-                ShowAlert()
-            }}> ALEEEEEEEEERT</button>
-             {showAlert && <div id="toast-top-right" className="fixed flex items-center w-full max-w-xs p-4 space-x-4 text-white bg-green-400 divide-x divide-gray-200 rounded-lg shadow top-5 right-5 dark:text-gray-400 dark:divide-gray-700 space-x dark:bg-gray-800" role="alert">
-                        <div class="text-sm font-normal">Top right positioning.</div>
-                    </div>}
+                ShowNotification()
+            }}> ALEEEEEEEEERT</button> 
+            {showNotification && <div id="toast-top-right" 
+            className="fixed flex items-center w-full max-w-xs p-4 text-white bg-blue-500 rounded-lg 
+            shadow-xl top-5 right-5  z-10 animate__animated animate__fadeInDown animate__faster" role="alert">
+                <div class="text-sm font-normal">Alert Created</div>
+            </div>}
             {golferData && <div>
                 {/* Homepage: YOU ARE LOGGED IN ! {golferData.golfer_first_name} */}
                 {/* <img src={selectedCourse?.course_image} alt="" className="w-full object-cover  absolute" style={{maxHeight:'500px'}} /> */}
                 <div className="flex justify-center" id={"main"}>
-                   
+
                     <div className="block  rounded-lg shadow-lg bg-white mt-20  " style={{ width: '90%', maxWidth: '540px', zIndex: '1', /*background: 'linear-gradient(0deg, #ffffff 91%, #16a34a 40%)' */ }}>
                         <h5 className="text-gray-900 text-white text-xl leading-tight  mb-2 flex items-center content-center " style={{ fontWeight: '300', color: 'white', padding: '20px', borderTopRightRadius: '10px', borderTopLeftRadius: '10px', background: '#16a34a' }}><IoTimeSharp style={{ marginRight: '12px' }} /> Create a Tee Time Alert </h5>
 
