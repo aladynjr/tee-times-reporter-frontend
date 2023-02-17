@@ -146,7 +146,7 @@ function TestimonialsSection() {
       >
         {
           testimonials.map((testimonial, index) => {
-            return <div className='bg-white rounded shadow-lg
+            return <div key={index} className='bg-white rounded shadow-lg
              transition duration-500 ease-in-out  testimonial-card-drag
             '
               onMouseDown={() => {

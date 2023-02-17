@@ -3,13 +3,14 @@ import { signOut, onAuthStateChanged } from "firebase/auth";
 
 import { auth } from "../firebase-config";
 
-import RedirectWhenLoggedOrNotLogged from '../utilities/RedirectWhenLoggedOrNotLogged'
 import { IoTimeSharp } from 'react-icons/io5'
 import { IoGolf } from 'react-icons/io5'
 import globalVal from '../globalVal'
 import { useNavigate } from 'react-router-dom';
 import LoggedInOrNot from '../utilities/LoggedInOrNot';
-
+import GenerateDatesForNext7Days from '../utilities/GenerateDatesForNext7Days';
+import FetchCoursesData from '../utilities/FetchCoursesData';
+import FetchGolferData from '../utilities/FetchGolferData';
 function Homepage() {
 
     const navigate = useNavigate();
@@ -21,7 +22,6 @@ function Homepage() {
         navigate("/")
 
     };
-    //  RedirectWhenLoggedOrNotLogged( false, '/')
 
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(null);
 
@@ -46,56 +46,32 @@ function Homepage() {
     });
 
 
-    const FetchGolferData = async () => {
-        try {
-            const response = await fetch(`${globalVal.host}/api/golfer/uuid/${golferUUID}`);
-            var jsonData = await response.json();
-
-            if (jsonData?.golfer_preferences_list?.length) {
-                //golfer_preferences_list is an array ocntains json objects, loop through and parse each object
-                var preferences = []
-                for (let i = 0; i < jsonData.golfer_preferences_list.length; i++) {
-                    preferences.push(JSON.parse(jsonData.golfer_preferences_list[i]))
-                }
-                jsonData.golfer_preferences_list = preferences
-
-            }
-            console.log(jsonData)
-            setGolferData(jsonData);
-
-        } catch (err) {
-            console.error(err.message);
-        }
-    }
-
     useEffect(() => {
         if (!golferUUID) return;
-        FetchGolferData()
+        const GetGolferData = async () => {
+            const golferData = await FetchGolferData(golferUUID)
+            setGolferData(golferData)
+        }
+        GetGolferData()
     }, [golferUUID])
 
 
     const [courses, setCourses] = useState(null)
+    const [selectedCourseID, setSelectedCourseID] = useState(null)
 
-    const FetchCoursesData = async () => {
-        try {
-            const response = await fetch(`${globalVal.host}/api/course/`);
-            const jsonData = await response.json();
-
-            setCourses(jsonData);
-            setSelectedCourseID(jsonData[0].course_id)
-
-        } catch (err) {
-            console.error(err.message);
-        }
-    }
 
     useEffect(() => {
-        FetchCoursesData()
+        const GetCoursesData = async () => {
+            const courses = await FetchCoursesData()
+            setCourses(courses)
+            // setSelectedCourseID(courses[0]?.course_id)
+        }
+        GetCoursesData()
     }, [])
 
-    console.log({courses})
 
-    const [selectedCourseID, setSelectedCourseID] = useState(null)
+    console.log({ courses })
+
 
     const [selectedCourse, setSelectedCourse] = useState(null)
     useEffect(() => {
@@ -103,13 +79,16 @@ function Homepage() {
         const selectedCourse = courses.find(course => course.course_id == selectedCourseID)
         setSelectedCourse(selectedCourse)
     }, [selectedCourseID])
-    // console.log({ selectedCourse })
 
 
     const [preferences, setPreferences] = useState({})
     console.log({ preferences })
     useEffect(() => {
-        if (!selectedCourse) return;
+        if (!selectedCourse) {
+            setPreferences({})
+            return;
+        }
+
         var preferences = {}
         selectedCourse.course_fields_and_options.forEach(fieldAndOptions => {
 
@@ -124,11 +103,8 @@ function Homepage() {
             if (fieldAndOptions.field_name == 'end_time') preferences[fieldAndOptions.field_name] = '17'
             if (fieldAndOptions.field_name == 'date') {
                 var date = fieldAndOptions.field_options?.[0]?.option_name
-                 preferences[fieldAndOptions.field_name] = date?.split('-')[2] + '-' + (date?.split('-')[0])?.toString().padStart(2, '0') + '-' + date?.split('-')[1]?.toString().padStart(2, '0')
+                preferences[fieldAndOptions.field_name] = date?.split('-')[2] + '-' + (date?.split('-')[0])?.toString().padStart(2, '0') + '-' + date?.split('-')[1]?.toString().padStart(2, '0')
             }
-
-
-
         })
         setPreferences(preferences)
 
@@ -137,58 +113,6 @@ function Homepage() {
     // console.log({ preferences })
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
-
-    const GenerateDatesDuring7Days = (date) => {
-        //receive a date like 01-27-2023 then geenrate dates for the following days, the first one should be 01-28-2023, the last one should be 02-03-2023
-        var dates = []
-        for (var i = 0; i < 7; i++) {
-            //convert date to 2023-01-27
-            //date = date.split('-')[1] + "-" + date.split('-')[0] + "-" + date.split('-')[2]
-            // console.log(date)
-            var newDate = new Date(date.split('-')[2], date.split('-')[0] - 1, date.split('-')[1])
-            // var newDate = new Date(date.split('-')[0],date.split('-')[1]-1,date.split('-')[2] )
-            newDate.setDate(newDate.getDate() + i)
-
-            //output in form of 01-28-2023
-            var month = newDate.getMonth() + 1
-            //if month is 1 digit, add 0 using padding
-            month = month.toString().padStart(2, '0') //if month is 1 digit, add 0 using padding
-            var day = newDate.getDate()
-            day = day.toString().padStart(2, '0') //if day is 1 digit, add 0 using padding
-            var year = newDate.getFullYear()
-            newDate = year + "-" + month + "-" + day
-
-
-            dates.push(newDate)
-        }
-        return dates
-    }
-
-    const UpdateGolferRecord = async (id, columns, new_values) => {
-        //update duration inside db using PUT with route /api/dashboard 
-
-        try {
-            let response = await fetch(`${globalVal.host}/api/golfer`, {
-                method: 'PUT',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ id: id, columns: columns, new_values: new_values })
-                //body: JSON.stringify({ id: [1], column: ["download_thumbnail_duration"], new_value: [(totalDuration) / 1000] })
-            })
-            console.log('%c golfer  updated successfully ', 'color: green')
-
-            FetchGolferData()
-            forceUpdate()
-
-        } catch (e) {
-            console.log("error when trying to update download ")
-            console.log(e)
-
-        }
-
-    }
 
     const CheckForDuplicateAlerts = () => {
         setAddNewAlertError('')
@@ -200,11 +124,10 @@ function Homepage() {
             if (JSON.stringify(golferPreference) === JSON.stringify(preferences)) duplicateFound = true
         }
         )
-       
+
         return duplicateFound
-
-
     }
+
 
     const [addNewAlertLoading, setAddNewAlertLoading] = useState(false)
     const [addNewAlertError, setAddNewAlertError] = useState('')
@@ -214,6 +137,8 @@ function Homepage() {
 
         //setAddNewAlertLoading(true)
         setAddNewAlertError('')
+
+
 
         try {
             let response = await fetch(`${globalVal.host}/api/golfer/preferences/add`, {
@@ -226,8 +151,7 @@ function Homepage() {
             })
             console.log('%c alert preferences added successfully ', 'color: green')
 
-             FetchGolferData()
-        //    forceUpdate()
+            FetchGolferData()
 
         }
         catch (e) {
@@ -276,17 +200,63 @@ function Homepage() {
 
     }
 
+    const defaultCourseFieldsAndOptions = [
+        {
+            "field_options": [
+                {
+                    "option_fullname": "Select Date"
+                }
+            ],
+            "field_fullname": "Date"
+        },
+        {
+            "field_options": [
+                {
+                    "option_fullname": "Select Time"
+                }
+            ],
+            "field_fullname": "Time"
+        },
+        {
+            "field_options": [
+                {
+                    "option_fullname": "Select Group Size"
+                }
+            ],
+            "field_fullname": "Group Size"
+        }
+
+
+    ]
+
+    const [showAlert, setShowAlert] = useState(false)
+    const ShowAlert = () => {
+
+        setShowAlert(true)
+        setTimeout(() => {
+            setShowAlert(false)
+        }, 3000);
+
+
+    }
 
     return (
         <div style={{ backgroundColor: '#fafafa' }} >
+            <button onClick={() => {
+                ShowAlert()
+            }}> ALEEEEEEEEERT</button>
+             {showAlert && <div id="toast-top-right" className="fixed flex items-center w-full max-w-xs p-4 space-x-4 text-white bg-green-400 divide-x divide-gray-200 rounded-lg shadow top-5 right-5 dark:text-gray-400 dark:divide-gray-700 space-x dark:bg-gray-800" role="alert">
+                        <div class="text-sm font-normal">Top right positioning.</div>
+                    </div>}
             {golferData && <div>
                 {/* Homepage: YOU ARE LOGGED IN ! {golferData.golfer_first_name} */}
                 {/* <img src={selectedCourse?.course_image} alt="" className="w-full object-cover  absolute" style={{maxHeight:'500px'}} /> */}
-                <div className="flex justify-center">
-                    <div className="block p-6 pt-4 rounded-lg shadow-lg bg-white mt-20  " style={{ width: '90%', maxWidth: '540px', zIndex: '1', background: 'linear-gradient(0deg, #ffffff 91%, #16a34a 40%)' }}>
-                        <h5 className="text-gray-900 text-white text-xl leading-tight  mb-2 flex items-center content-center " style={{ marginTop: '4px', fontWeight: '300', color:'white' }}><IoTimeSharp style={{ marginRight: '12px' }} /> Create a Tee Time Alert </h5>
+                <div className="flex justify-center" id={"main"}>
+                   
+                    <div className="block  rounded-lg shadow-lg bg-white mt-20  " style={{ width: '90%', maxWidth: '540px', zIndex: '1', /*background: 'linear-gradient(0deg, #ffffff 91%, #16a34a 40%)' */ }}>
+                        <h5 className="text-gray-900 text-white text-xl leading-tight  mb-2 flex items-center content-center " style={{ fontWeight: '300', color: 'white', padding: '20px', borderTopRightRadius: '10px', borderTopLeftRadius: '10px', background: '#16a34a' }}><IoTimeSharp style={{ marginRight: '12px' }} /> Create a Tee Time Alert </h5>
 
-                        <div className='options  mt-12' >
+                        <div className='options  mt-2 p-6 pt-4' >
                             <div className="mb-3  flex items-center pb-5" style={{ borderBottom: '#e7e4e4 1px solid' }}>
                                 <IoGolf style={{ fontSize: '23px', marginRight: '10px' }} />
 
@@ -297,6 +267,7 @@ function Homepage() {
 
                                     aria-label="Default select example">
                                     {/* <option >Golf course</option>  */}
+                                    <option value={null}>Select your course</option>
                                     {courses && courses.map((course, i) => {
                                         return <option key={i} value={course.course_id}>{course.course_fullname}</option>
                                     })}
@@ -304,7 +275,33 @@ function Homepage() {
 
                                 </select>
                             </div>
+                            {!selectedCourse &&
+                                <div>
 
+
+                                    {defaultCourseFieldsAndOptions.map((fieldAndOptions, i) => {
+                                        //dont show field if it has a fixed option 
+
+
+                                        return (<div key={i} className='mb-4 flex items-center pt-1 pb-5' style={{ borderBottom: '#e7e4e4 1px solid' }} >
+                                            <label className="block  text-lg text-gray-700 whitespace-nowrap ">{fieldAndOptions.field_fullname}</label>
+                                            <select
+
+                                                className="  block w-full px-3 py-1.5 text-lg font-semibold text-gray-900 bg-white bg-clip-padding cursor-pointer outline-none "
+                                                aria-label="Default select example">
+                                                {fieldAndOptions?.field_options.map((option, i) => {
+
+                                                    return <option key={i} value={option.option_name} >{option.option_fullname}</option>
+                                                })}
+
+                                            </select>
+                                        </div>)
+                                    })}
+
+
+
+
+                                </div>}
                             {selectedCourse && <div>
 
 
@@ -330,7 +327,6 @@ function Homepage() {
                                                         newPreferences[fieldAndOptions.field_name] = e.target.value
                                                         setPreferences(newPreferences)
                                                         console.log({ preferences })
-                                                        //forceUpdate()
                                                     }}
                                                     name={fieldAndOptions.field_name}
                                                     className="  block w-full px-3 py-1.5 text-lg font-semibold text-gray-900 bg-white bg-clip-padding cursor-pointer outline-none "
@@ -347,6 +343,7 @@ function Homepage() {
                                                         }
 
                                                         return <option
+                                                            key={i}
                                                             value={hour}
 
                                                         >{displayHour}</option>
@@ -369,7 +366,6 @@ function Homepage() {
                                                 newPreferences[fieldAndOptions.field_name] = e.target.value
                                                 setPreferences(newPreferences)
                                                 console.log({ preferences })
-                                                //forceUpdate()
                                             }}
 
                                             name={fieldAndOptions.field_name}
@@ -399,7 +395,7 @@ function Homepage() {
 
                                                 //if field name is date, then generate dates for the next 7 days
                                                 if (fieldAndOptions.field_name == "date") {
-                                                    return GenerateDatesDuring7Days(option.option_name).map((date, i) => {
+                                                    return GenerateDatesForNext7Days(option.option_name).map((date, i) => {
                                                         return <option key={i} value={date} >{
                                                             //show date in legible format
                                                             new Date(date.toLocaleString('en-US', { timeZone: 'UTC' })).toLocaleDateString('en-US', {
@@ -426,30 +422,32 @@ function Homepage() {
                                 })}
 
 
-                                <div className="flex space-x-2 justify-center mt-12 mb-4">
-                                    <button type="button"
-                                        /* onClick={() => {
-                                            // UpdateGolferRecord(golferData.golfer_id, ["golfer_preferences"], [JSON.stringify(preferences)])
-                                            //AddNewAlertPreferences(golferData.golfer_id, (preferences))
-                                         }}*/
 
-                                        data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                        style={{
-                                            opacity: addNewAlertLoading ? '0.5' : '1',
-                                            backgroundColor: reachedAlertsCap && '#e7e4e4',
-                                            color: reachedAlertsCap && '#a8a8a8',
-                                            pointerEvents: reachedAlertsCap && 'none'
-                                        }}
-                                        className="inline-block px-10 py-4 bg-green-600 text-white font-medium text-sm leading-tight uppercase rounded shadow-md hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg transition duration-150 ease-in-out w-[100%] mb-2">
-                                        Create Alert
-                                    </button>
-                                </div>
-                                {addNewAlertError && <p className="text-red-400 text-sm text-center mb-6"> {addNewAlertError} </p>}
-                                {reachedAlertsCap && <p className="text-gray-600  text-sm mb-6">
-                                    Maximum number of active alerts attained, please delete an alert to create a new one
-                                </p>}
 
                             </div>}
+                            <div className="flex space-x-2 justify-center mt-12 mb-4">
+                                <button type="button"
+                                    /* onClick={() => {
+                                        // UpdateGolferRecord(golferData.golfer_id, ["golfer_preferences"], [JSON.stringify(preferences)])
+                                        //AddNewAlertPreferences(golferData.golfer_id, (preferences))
+                                     }}*/
+
+                                    data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                    style={{
+                                        opacity: addNewAlertLoading ? '0.5' : '1',
+                                        backgroundColor: reachedAlertsCap && '#e7e4e4',
+                                        color: reachedAlertsCap && '#a8a8a8',
+                                        pointerEvents: reachedAlertsCap && 'none'
+                                    }}
+
+                                    className="inline-block px-10 py-4 bg-green-600 text-white font-medium text-sm leading-tight uppercase rounded shadow-md hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg transition duration-150 ease-in-out w-[100%] mb-2">
+                                    Create Alert
+                                </button>
+                            </div>
+                            {addNewAlertError && <p className="text-red-400 text-sm text-center mb-6"> {addNewAlertError} </p>}
+                            {reachedAlertsCap && <p className="text-gray-600  text-sm mb-6">
+                                Maximum number of active alerts attained, please delete an alert to create a new one
+                            </p>}
                         </div>
                     </div>
                 </div>
@@ -467,8 +465,8 @@ function Homepage() {
 
 
                 {golferData?.golfer_preferences_list.length && <div className="flex justify-center flex-col items-center mt-12 mb-64">
-                    {golferData?.golfer_preferences_list.map((alertPreferences) => {
-                        return <div className="block p-6 pt-4 rounded-lg shadow-lg bg-white mt-12  " style={{ width: '90%', maxWidth: '400px', zIndex: '1' }}>
+                    {golferData?.golfer_preferences_list.map((alertPreferences, i) => {
+                        return <div key={i} className="block p-6 pt-4 rounded-lg shadow-lg bg-white mt-12  " style={{ width: '90%', maxWidth: '400px', zIndex: '1' }}>
 
                             <div className='flex flex-col'>
 
@@ -492,13 +490,13 @@ function Homepage() {
 
 
                                         {key == "date" && <span className="text-gray-500 text-xs ml-2">({
-                                        new Date(date.toLocaleString('en-US', { timeZone: 'UTC' })).toLocaleDateString('en-US', {
-                                            weekday: 'long', // long, short, narrow
-                                            year: 'numeric', // numeric, 2-digit
-                                            month: 'long', // numeric, 2-digit, long, short, narrow
-                                            day: 'numeric' // numeric, 2-digit
-                                        })
-                                       })</span>}
+                                            new Date(date.toLocaleString('en-US', { timeZone: 'UTC' })).toLocaleDateString('en-US', {
+                                                weekday: 'long', // long, short, narrow
+                                                year: 'numeric', // numeric, 2-digit
+                                                month: 'long', // numeric, 2-digit, long, short, narrow
+                                                day: 'numeric' // numeric, 2-digit
+                                            })
+                                        })</span>}
 
 
 
@@ -565,10 +563,13 @@ function Homepage() {
                             <button type="button"
                                 onClick={() => {
                                     if (CheckForDuplicateAlerts()) {
+                                        setAddNewAlertError('a duplicate alert already exists!')
+                                        return;
+                                    }
+                                    if (!selectedCourse) {
 
                                         return;
                                     }
-
                                     // UpdateGolferRecord(golferData.golfer_id, ["golfer_preferences"], [JSON.stringify(preferences)])
                                     AddNewAlertPreferences(golferData.golfer_id, (preferences))
 

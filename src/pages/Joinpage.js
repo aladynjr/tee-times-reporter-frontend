@@ -5,14 +5,12 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
 
 import AddNewGolferToDatabase from '../utilities/AddNewGolferToDatabase'
-import RedirectWhenLoggedOrNotLogged from '../utilities/RedirectWhenLoggedOrNotLogged'
 import LoggedInOrNot from '../utilities/LoggedInOrNot';
 import "yup-phone";
 
 function Joinpage() {
     const navigate = useNavigate();
 
-   // RedirectWhenLoggedOrNotLogged( '/home', false)
 
    const [isUserLoggedIn, setIsUserLoggedIn] = useState(null);
 

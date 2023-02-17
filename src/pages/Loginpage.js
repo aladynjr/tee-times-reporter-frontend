@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react'
 import * as yup from 'yup';
 import { auth, db } from "../firebase-config";
 import {signInWithEmailAndPassword} from "firebase/auth";
-import RedirectWhenLoggedOrNotLogged from '../utilities/RedirectWhenLoggedOrNotLogged'
 import { useNavigate } from 'react-router-dom';
 import LoggedInOrNot from '../utilities/LoggedInOrNot';
 function LoginPage() {
   const navigate = useNavigate();
 
- // RedirectWhenLoggedOrNotLogged( '/home', false)
 
  const [isUserLoggedIn, setIsUserLoggedIn] = useState(null);
 

@@ -28,7 +28,7 @@ function TipsSection() {
 <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }} >
   {tips.map((tip, index) => {
     return (
-      <div className='block p-8 pb-12 rounded-xl shadow-lg  bg-white' style={{ minWidth: '300px', width: '30%', maxWidth: '600px', margin: '20px' }}>
+      <div key={index} className='block p-8 pb-12 rounded-xl shadow-lg  bg-white' style={{ minWidth: '300px', width: '30%', maxWidth: '600px', margin: '20px' }}>
         <img src={tip.image} alt="tips" style={{ width: '70px', height: '70px' }} />
         <div className=' alert-title ' style={{ fontSize: '28px' }} >{tip.title}</div>
         <div className='alert-description'  >{tip.description}</div>

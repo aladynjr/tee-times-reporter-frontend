@@ -11,7 +11,6 @@ import InsightsSection from '../components/InsightsSection';
 import TestimonialsSection from '../components/TestimonialsSection';
 
 function Landingpage() {
-  // RedirectWhenLoggedOrNotLogged( '/home', false)
 
   return (
     <div style={{ background: '#F5F8FD' }}>
