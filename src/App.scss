@@ -60,7 +60,10 @@
 .nav-link:hover+.nav-line {
     width: 25px;
 }
+.active-nav{
+    width: 25px;
 
+}
 @media (max-width: 1200px) {
     .nav-line {
         margin-bottom: 0;
@@ -136,7 +139,7 @@
 .hero-description ,.alert-description{
     color: rgb(113, 131, 165);
     font-weight: 400;
-    font-size: 22px;
+    font-size: 24px;
     line-height: 40px;
 }
 
@@ -497,4 +500,22 @@ color: #242555;
     .dashed-line{
     display: none;
     }
+}
+
+
+//pulse animation where opacity goes from 0 to 1 and back to 0
+@keyframes pulseanim {
+    0% {
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.4;
+    }
+}
+
+.pulse1 {
+    animation: pulseanim 2s infinite;
 }

@@ -9,9 +9,29 @@ import TipsSection from '../components/TipsSection';
 import Footer from '../components/Footer';
 import InsightsSection from '../components/InsightsSection';
 import TestimonialsSection from '../components/TestimonialsSection';
+import {signInWithEmailAndPassword} from "firebase/auth";
+import { useNavigate } from 'react-router-dom';
+import LoggedInOrNot from '../utilities/LoggedInOrNot';
 
 function Landingpage() {
+  const navigate = useNavigate();
 
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(null);
+
+  useEffect(()=>{
+    if(window.location.pathname.includes('landing')) return
+    setIsUserLoggedIn(LoggedInOrNot())
+  },[])
+  
+  if (!isUserLoggedIn) {
+   // console.log('%c user is not logged in !', 'color: red; font-size: 20px;')
+      //navigate('/login')
+    } else{
+     // console.log('%c user is logged in !', 'color: green; font-size: 20px;')
+      navigate('/home')
+ 
+  }
+ 
   return (
     <div style={{ background: '#F5F8FD' }}>
       <Navbar />

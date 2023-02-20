@@ -19,10 +19,12 @@ function App() {
       <div className="pages">
 
         <Routes>
-          <Route exact path="/" element={<Loginpage />} />
+        <Route exact path="/" element={<Landingpage />} />
+        <Route exact path="/landing" element={<Landingpage />} />
+
+          {/* <Route exact path="/" element={<Loginpage />} /> */}
           <Route exact path="/login" element={<Loginpage />} />
 
-          <Route exact path="/landing" element={<Landingpage />} />
           <Route exact path="/join" element={<Joinpage />} />
 
           <Route exact path="/home" element={<Homepage />} />
