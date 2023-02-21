@@ -243,7 +243,7 @@ function AlertDemoSection() {
                         return GenerateDatesForNext7Days(option.option_name).map((date, i) => {
                           return <option key={i} value={date} >{
                             //show date in legible format
-                            new Date(date.toLocaleString('en-US', { timeZone: 'UTC' })).toLocaleDateString('en-US', {
+                            new Date((date + ' 12:30').toLocaleString('en-US', { timeZone: 'America/New_York' })).toLocaleDateString('en-US', {
                               weekday: 'long', // long, short, narrow
                               year: 'numeric', // numeric, 2-digit
                               month: 'long', // numeric, 2-digit, long, short, narrow

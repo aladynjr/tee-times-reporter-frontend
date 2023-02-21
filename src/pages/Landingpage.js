@@ -31,21 +31,32 @@ function Landingpage() {
       navigate('/home')
  
   }
- 
+  const navLinks = [
+    'Home',
+    'How It Works',
+    'Quick Tips',
+    'Testimonials',
+    'Featured Course',
+
+    'Login'
+  ]
   return (
     <div style={{ background: '#F5F8FD' }}>
       <Navbar />
+      <div id={'Home'} />
+
       <HeroSection />
 
       <div style={{ marginBlock: '100px' }}></div>
       <AlertDemoSection />
-      <div style={{ marginBlock: '100px' }}></div>
+      <div id={'How It Works'}  style={{ marginBlock: '100px' }}></div>
       <GuideSection />
-      <div style={{ marginBlock: '100px' }}></div>
+      <div id={'Quick Tips'} style={{ marginBlock: '100px' }}></div>
       <TipsSection />
-      <div style={{ marginBlock: '100px' }}></div>
+      <div id={'Testimonials'} style={{ marginBlock: '100px' }}  ></div>
       <TestimonialsSection />
 
+      <div id={'Featured Course'} />
 
       <InsightsSection />
 

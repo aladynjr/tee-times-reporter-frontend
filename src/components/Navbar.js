@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useEffect, useState} from 'react'
 import Logo from '../assets/images/logo.svg'
 import MenuIcon from '../assets/images/menu-icon.svg'
 import { useNavigate } from 'react-router-dom';
@@ -10,14 +10,41 @@ function Navbar() {
     
 const navLinks = [
     'Home',
-    'Alerts',
-    'Work',
+    'How It Works',
     'Quick Tips',
     'Testimonials',
-    'Case Study' ,
-    'Our Study',
+    'Featured Course',
+
     'Login'
   ]
+
+  const handleClickScroll = (link) => {
+    const element = document.getElementById(link);
+    console.log(element)
+
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  //detect if use scrolled to a certain point (element with id 'navbar)
+  const [scrolledToTop, setScrolledToTop] = useState(true);
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY;
+      if (offset > 100) {
+
+        setScrolledToTop(false);
+      } else {
+        setScrolledToTop(true);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+  }, []);
+
+
+console.log({scrolledToTop})
+
   return (
     <div>
 
@@ -48,13 +75,16 @@ const navLinks = [
             <ul className="navbar-nav flex flex-col pl-0 list-style-none ml-auto mobile-nav-list " style={{marginRight:'20px'}}>
               {navLinks.map((link, index) => (
                 <li className="nav-item p-2 cursor-pointer" key={index} onClick={()=>{
+
                   if(link=='Login'){
                     navigate('/login')
+                  } else {
+                    handleClickScroll(link)
                   }
                 }}>
 
-                  <a className={clsx("nav-link text-xs xl:text-sm 2xl:text-base   hover:text-green-500  transition duration-100 ease-in-out ", link=='Home' && 'text-green-500')} style={{fontWeight:(link=='Login') && '900', whiteSpace: 'nowrap'}} >{link}</a>
-                        <span className={clsx("nav-line  bottom-0 bg-green-500  transition-all duration-200 ease-in-out ",link=='Home' && 'active-nav' )} ></span>
+                  <a  className={clsx("nav-link text-xs xl:text-sm 2xl:text-base   hover:text-green-500  transition duration-100 ease-in-out ", (link=='Home' && scrolledToTop) && 'text-green-500 	')} style={{fontWeight:(link=='Login') && '900', whiteSpace: 'nowrap'}} >{link}</a>
+                        <span className={clsx("nav-line  bottom-0 bg-green-500  transition-all transition  ease-in-out duration-200 ease-in-out ",(link=='Home' && scrolledToTop) && 'active-nav delay-200' )} ></span>
 
                 </li>
               ))}

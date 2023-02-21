@@ -2,8 +2,11 @@ import React from 'react'
 import GolfCart from '../assets/images/golf-cart.svg'
 import GolfCartShadow from '../assets/images/golf-cart-shadow.svg'
 import Logo from '../assets/images/logo.svg'
+import { useNavigate } from 'react-router-dom';
 
 function Footer() {
+  const navigate = useNavigate();
+
   return (
     <div>
           <div style={{ display: 'flex', width: '90%', maxWidth: '1200px', margin: 'auto' }} >
@@ -19,6 +22,9 @@ function Footer() {
             className="inline-block px-6 py-2.5  text-white font-medium text-xs leading-tight bg-green-500 uppercase rounded  hover:bg-green-600 hover:shadow-lg  focus:shadow-lg 
           focus:outline-none focus:ring-0  active:shadow-lg transition duration-150 ease-in-out  hero-button-mobile"
             style={{ display: 'flex', margin: 'auto', padding: '14px 28px', width: '202px', height: '52px', borderRadius: '12px', color: '#F5F8FD', fontSize: '16px', fontWeight: '700', lineHeight: '150%', marginTop: '25px' }}
+            onClick={()=>{
+              navigate('/join')
+             }}
           >SET UP ALERT NOW</button>
         </div>
         <div>

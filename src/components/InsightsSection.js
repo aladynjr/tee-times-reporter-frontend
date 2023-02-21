@@ -17,12 +17,12 @@ function InsightsSection() {
     <div style={{ background: 'white', paddingBlock: mobile ? '0px' : '150px' }} >
       <img src={Blob} alt="blob" className='insights-blob'  />
 
-      <div className='insights-wrapper'  >
+      <div className='insights-wrapper'>
         <div>
           <img src={GolfPlayers} alt="golf players" style={{ width: '90%', maxWidth: '1200px', height: 'auto', position: 'relative', zIndex: '1', margin: 'auto' }} />
         </div>
         <div style={{ width: '90%', maxWidth: '700px' }} >
-          <div className=' alert-title ' style={{ color: 'rgba(44, 60, 85, 1)', paddingBlock: '25px' }} > Why This Works </div>
+          <div className=' alert-title ' style={{ color: 'rgba(44, 60, 85, 1)', paddingBlock: '25px' }} > Featured Course </div>
 
           <div className='alert-description' dangerouslySetInnerHTML={{
             __html: `Working with the head pro at one of the most popular courses in San Diego, we found that there were nearly 60 cancellations on average per DAY!!

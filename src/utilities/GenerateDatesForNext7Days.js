@@ -23,6 +23,7 @@ function GenerateDatesForNext7Days(date) {
 
         dates.push(newDate)
     }
+    console.log(dates)
     return dates
 
 }
