@@ -374,13 +374,13 @@ function Homepage() {
                 <div class="text-sm font-normal">{notificationText}</div>
             </div>}
             <div>
-                <button type="button"
+                {golferData && <button type="button"
                     data-bs-toggle="modal" data-bs-target="#exampleModal3"
 
-                    style={{fontWeight:'700', color:'rgb(41, 47, 77)'}}
+                    style={{fontWeight:'700', color:'rgb(41, 47, 77)', position:'absolute'}}
                     className="inline-block rounded px-4 pt-3 pb-2 text-sm text-gray-500 font-bold uppercase leading-normal  focus:ring-0 ">
                     <div className='flex items-center'>   <div>Edit details</div> <AiFillEdit style={{marginLeft:'5px'}} /></div>
-                </button>
+                </button>}
                 {/* Homepage: YOU ARE LOGGED IN ! {golferData.golfer_first_name} */}
                 {/* <img src={selectedCourse?.course_image} alt="" className="w-full object-cover  absolute" style={{maxHeight:'500px'}} /> */}
                 <div className="flex justify-center" id={"main"}>
@@ -680,8 +680,9 @@ function Homepage() {
                         logout()
 
                     }}
-
-                    className="px-3 py-1 m-6 bg-red-900 ml-6 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out ml-1">
+                        style={{marginLeft:'14px'}}
+                    className="px-3  py-1 m-6 bg-red-900 ml-6 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out ml-1">
+                    
                     LOGOUT</button>
 
             </div>
