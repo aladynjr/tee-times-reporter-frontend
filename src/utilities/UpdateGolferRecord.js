@@ -18,8 +18,7 @@ const UpdateGolferRecord = async (id, columns, new_values) => {
 
 
     } catch (e) {
-        console.log("error when trying to update download ")
-        console.log(e)
+        console.log("error when trying to update golfer " + e.message)
 
     }
 

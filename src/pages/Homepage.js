@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useReducer } from 'react'
-import { signOut, onAuthStateChanged } from "firebase/auth";
+import React, { useEffect, useState, useReducer, useRef } from 'react'
+import { signOut, onAuthStateChanged, updateEmail, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 
 import { auth } from "../firebase-config";
 
@@ -11,6 +11,9 @@ import LoggedInOrNot from '../utilities/LoggedInOrNot';
 import GenerateDatesForNext7Days from '../utilities/GenerateDatesForNext7Days';
 import FetchCoursesData from '../utilities/FetchCoursesData';
 import FetchGolferData from '../utilities/FetchGolferData';
+import UpdateGolferRecord from '../utilities/UpdateGolferRecord';
+import clsx from 'clsx';
+import {AiFillEdit} from 'react-icons/ai'
 function Homepage() {
 
     const navigate = useNavigate();
@@ -47,7 +50,6 @@ function Homepage() {
 
     }, [auth])
 
-
     useEffect(() => {
         if (!golferUUID) return;
         const GetGolferData = async () => {
@@ -72,7 +74,6 @@ function Homepage() {
     }, [])
 
 
-    console.log({ courses })
 
 
     const [selectedCourse, setSelectedCourse] = useState(null)
@@ -84,7 +85,7 @@ function Homepage() {
 
 
     const [preferences, setPreferences] = useState({})
-    console.log({ preferences })
+
     useEffect(() => {
         if (!selectedCourse) {
             setPreferences({})
@@ -152,7 +153,7 @@ function Homepage() {
                 body: JSON.stringify({ id: golfer_id, preferences: preferences })
             })
             console.log('%c alert preferences added successfully ', 'color: green')
-            ShowNotification()
+            ShowNotification('Alert created!', 'success')
             const golferData = await FetchGolferData(golferUUID)
             setGolferData(golferData)
 
@@ -190,12 +191,15 @@ function Homepage() {
             console.log('%c alert preferences deleted successfully ', 'color: green')
             const golferData = await FetchGolferData(golferUUID)
             setGolferData(golferData)
+            ShowNotification('Alert deleted', 'success')
 
 
         }
         catch (e) {
             console.log("error when trying to delete alert preferences ")
             console.log(e.message)
+            ShowNotification('Something went wrong with deleting Alert', 'error')
+
         }
         finally {
             // setAddNewAlertLoading(false)
@@ -233,17 +237,7 @@ function Homepage() {
 
     ]
 
-    const [showNotification, setShowNotification] = useState(false)
 
-    const ShowNotification = () => {
-        setShowNotification(true)
-        clearTimeout()
-
-        setTimeout(() => {
-            setShowNotification(false)
-        }
-            , 5000)
-    }
 
 
     useEffect(() => {
@@ -259,17 +253,134 @@ function Homepage() {
 
     }, [golferData?.golfer_id])
 
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+    const [email, setEmail] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState('')
+    const [password, setPassword] = useState('')
+
+    useEffect(() => {
+        if (!golferData) return
+        setFirstName(golferData.golfer_first_name)
+        setLastName(golferData.golfer_last_name)
+        setEmail(golferData.golfer_email)
+        setPhoneNumber(golferData.golfer_phone_number)
+    }, [golferData])
+
+    const [allowSavingChanges, setAllowSavingChanges] = useState(false)
+    useEffect(() => {
+        if (!golferData) return
+        if (golferData.golfer_first_name == firstName
+            && golferData.golfer_last_name == lastName
+            && golferData.golfer_email == email
+            && golferData.golfer_phone_number == phoneNumber) setAllowSavingChanges(false)
+        else setAllowSavingChanges(true)
+    })
+
+    //update firebase auth email
+    const UpdateFirebaseAuthEmail = async () => {
+
+        const credential = EmailAuthProvider.credential(
+            auth.currentUser.email,
+            password
+        )
+
+        try {
+            await reauthenticateWithCredential(
+                auth.currentUser,
+                credential
+            )
+            await updateEmail(auth.currentUser, email)
+            console.log('email updated successfully on firebase')
+            return true
+
+        } catch (error) {
+            console.log('error updating email : ' + error.message)
+            return false
+        }
+
+
+
+
+
+    }
+
+    const UpdateEditDetailsChanges = async () => {
+
+        if (email != golferData.golfer_email) {
+            const result = await UpdateFirebaseAuthEmail()
+
+            if (!result) {
+                console.log('something went wrong when updating email on firebase')
+                ShowNotification('Something went wrong when updating email!', 'error')
+                return
+            }
+        }
+
+        try {
+            await UpdateGolferRecord(golferData?.golfer_id, ['golfer_first_name', 'golfer_last_name', 'golfer_email', 'golfer_phone'], [firstName, lastName, email, phoneNumber])
+
+            var newGolferData = golferData;
+            newGolferData.golfer_first_name = firstName
+            newGolferData.golfer_last_name = lastName
+            newGolferData.golfer_email = email
+            newGolferData.golfer_phone_number = phoneNumber
+
+            setGolferData(newGolferData)
+
+            console.log('details updated succesfully')
+            ShowNotification('Details updated!', 'success')
+
+        } catch (e) {
+            console.log(e.message)
+            ShowNotification('Something went wrong when updating your details!', 'error')
+
+        }
+
+
+    }
+
+    const [showNotification, setShowNotification] = useState(false)
+    const [notificationText, setNotificationText] = useState('')
+    const [notificationType, setNotificationType] = useState('')
+
+    const timeoutRef = useRef(null);
+
+    const ShowNotification = (text, type) => {
+        setNotificationText(text)
+        setNotificationType(type)
+
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+        setShowNotification(true);
+        timeoutRef.current = setTimeout(() => {
+            setShowNotification(false);
+        }, 5000);
+    };
+
+    const GenerateRandomNumber = () => {
+        return Math.floor(Math.random() * 1000000000)
+    }
     return (
         <div style={{ backgroundColor: '#fafafa' }} >
+
+
             {/* <button onClick={() => {
-                ShowNotification()
-            }}> ALEEEEEEEEERT</button>  */}
-            {showNotification && <div id="toast-top-right"
-                className="fixed flex items-center w-full max-w-xs p-4 text-white bg-blue-500 rounded-lg 
-            shadow-xl top-5 right-5  z-10 animate__animated animate__fadeInDown animate__faster" role="alert">
-                <div class="text-sm font-normal">Alert Created</div>
+                ShowNotification(GenerateRandomNumber(), 'success')
+            }}> ALEEEEEEEEERT</button>   */}
+            {showNotification && <div key={notificationText} id="toast-top-right"
+                className={clsx("fixed flex items-center w-full max-w-xs p-4 text-white  rounded-lg shadow-xl top-5 right-5  z-10 animate__animated animate__fadeInDown animate__faster", notificationType == 'success' && 'bg-blue-500', notificationType == 'error' && 'bg-red-500')} role="alert">
+                <div class="text-sm font-normal">{notificationText}</div>
             </div>}
             <div>
+                <button type="button"
+                    data-bs-toggle="modal" data-bs-target="#exampleModal3"
+
+                    style={{fontWeight:'700', color:'rgb(41, 47, 77)'}}
+                    className="inline-block rounded px-4 pt-3 pb-2 text-sm text-gray-500 font-bold uppercase leading-normal  focus:ring-0 ">
+                    <div className='flex items-center'>   <div>Edit details</div> <AiFillEdit style={{marginLeft:'5px'}} /></div>
+                </button>
                 {/* Homepage: YOU ARE LOGGED IN ! {golferData.golfer_first_name} */}
                 {/* <img src={selectedCourse?.course_image} alt="" className="w-full object-cover  absolute" style={{maxHeight:'500px'}} /> */}
                 <div className="flex justify-center" id={"main"}>
@@ -281,12 +392,12 @@ function Homepage() {
                         </h5>
                         {!(golferData && courses?.length) && <div>
                             <div role="status" class="pulse1 ">
-                                    <div class="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{width:'90%', margin:'auto', marginBlock:'20px'}} ></div>
-                                    <div class="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{width:'90%', margin:'auto', marginBlock:'20px'}} ></div>
-                                    <div class="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{width:'90%', margin:'auto', marginBlock:'20px'}} ></div>
-                                    <div class="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{width:'90%', margin:'auto', marginBlock:'20px'}} ></div>
-                                    
-                                    <div class="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{width:'60%', margin:'auto', marginBlock:'20px', marginTop:'40px'}} ></div>
+                                <div class="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{ width: '90%', margin: 'auto', marginBlock: '20px' }} ></div>
+                                <div class="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{ width: '90%', margin: 'auto', marginBlock: '20px' }} ></div>
+                                <div class="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{ width: '90%', margin: 'auto', marginBlock: '20px' }} ></div>
+                                <div class="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{ width: '90%', margin: 'auto', marginBlock: '20px' }} ></div>
+
+                                <div class="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{ width: '60%', margin: 'auto', marginBlock: '20px', marginTop: '40px' }} ></div>
 
                                 <span class="sr-only">Loading...</span>
                             </div>
@@ -499,7 +610,7 @@ function Homepage() {
 
 
 
-                {golferData?.golfer_preferences_list.length && <div className="flex justify-center flex-col items-center mt-12 mb-64">
+                {(golferData?.golfer_preferences_list?.length > 0) && <div className="flex justify-center flex-col items-center mt-12 mb-64">
                     {golferData?.golfer_preferences_list.map((alertPreferences, i) => {
                         return <div key={i} className="block p-6 pt-4 rounded-lg shadow-lg bg-white mt-12  " style={{ width: '90%', maxWidth: '400px', zIndex: '1' }}>
 
@@ -569,7 +680,7 @@ function Homepage() {
                         logout()
 
                     }}
-                    data-bs-dismiss="modal"
+
                     className="px-3 py-1 m-6 bg-red-900 ml-6 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out ml-1">
                     LOGOUT</button>
 
@@ -652,6 +763,86 @@ function Homepage() {
 
             </div>
 
+            <div className="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
+                id="exampleModal3" tabIndex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+                <div className="modal-dialog relative w-auto pointer-events-none">
+                    <div
+                        className="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
+                        <div
+                            className="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
+                            <h5 className="text-xl font-medium leading-normal text-gray-800" id="exampleModalLabel">Edit your details</h5>
+                            <button type="button"
+                                className="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
+                                data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body relative p-4 text-gray-500">
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="form-group mb-6">
+                                    <label className='text-sm test-gray-200 p-2 pr-0' > First name </label>
+                                    <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="exampleInput123" aria-describedby="emailHelp123" placeholder="First name" />
+                                </div>
+                                <div className="form-group mb-6">
+                                    <label className='text-sm test-gray-200 p-2 pr-0' > Last name </label>
+
+                                    <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="exampleInput124" aria-describedby="emailHelp124" placeholder="Last name" />
+                                </div>
+                            </div>
+                            <div className="form-group mb-8">
+                                <label className='text-sm test-gray-200 p-2 pr-0' > Email* </label>
+                                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="exampleInput125"
+                                    placeholder="Email address" />
+                                <div
+                                    class="absolute w-full text-xs text-neutral-500 dark:text-neutral-200"
+                                    data-te-input-helper-ref>
+                                    *email will also be changed for Login
+                                </div>
+                            </div>
+                            {(email !== golferData?.golfer_email) && <div className="form-group mb-6">
+                                <label className='text-sm test-gray-200 p-2 pr-0' > Password verification </label>
+                                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="exampleInput125"
+                                    placeholder="Password" />
+
+                            </div>}
+                            <div className="form-group mb-6 ">
+                                <label className='text-sm test-gray-200 p-2 pr-0' > Phone number </label>
+
+                                <div className=" flex items-center">
+
+                                    <div className='mr-2 text-gray-500' >+1</div>
+                                    <input type="tel" value={phoneNumber} onChange={
+                                        (e) => setPhoneNumber((e.target.value)?.replace(/\s/g, ''))
+
+
+                                    } className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="exampleInput125"
+                                        placeholder="Phone Number" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div
+                            className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
+                            <button type="button" className="px-6 py-2.5 bg-gray-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-gray-700 hover:shadow-lg focus:bg-gray-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-gray-800 active:shadow-lg transition duration-150 ease-in-out opacity-80" data-bs-dismiss="modal">Close</button>
+                            <button type="button"
+                                data-bs-dismiss="modal"
+                                className={clsx("px-6 py-2.5 bg-green-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg transition duration-150 ease-in-out ml-1", !allowSavingChanges && 'opacity-50 ')} style={{
+
+                                    pointerEvents: allowSavingChanges ? 'all' : 'none'
+                                }}
+                                onClick={async () => {
+                                    if (allowSavingChanges) {
+
+                                        UpdateEditDetailsChanges()
+
+                                    }
+                                }}
+                            >
+                                Save</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
 
 
         </div>
