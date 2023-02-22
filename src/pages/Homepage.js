@@ -109,11 +109,12 @@ function Homepage() {
                 preferences[fieldAndOptions.field_name] = date?.split('-')[2] + '-' + (date?.split('-')[0])?.toString().padStart(2, '0') + '-' + date?.split('-')[1]?.toString().padStart(2, '0')
             }
         })
+        preferences['course'] = selectedCourse?.course_name
         setPreferences(preferences)
 
     }, [selectedCourse])
 
-    // console.log({ preferences })
+     console.log({ preferences })
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
 
@@ -624,14 +625,13 @@ function Homepage() {
                                     var cleanedKey = key.replace(/_/g, ' ')
                                     cleanedKey = cleanedKey.charAt(0).toUpperCase() + cleanedKey.slice(1)
 
-
-
+            
                                     var date = new Date(alertPreferences[key])
 
 
                                     return <div key={i} className="flex  items-center mb-4 mb-4   pb-3" style={{ borderBottom: '#e7e4e4 1px solid', marginTop: '-5px' }}>
                                         <div className='capitalize'>{cleanedKey} </div>
-                                        <div className='font-semibold ml-2 capitalize' > {alertPreferences[key]}{(key == 'start_time' || key == 'end_time') && ':00'} </div>
+                                        <div className='font-semibold ml-2 capitalize' > {alertPreferences[key]?.replace('_',' ')}{(key == 'start_time' || key == 'end_time') && ':00'} </div>
 
 
 
