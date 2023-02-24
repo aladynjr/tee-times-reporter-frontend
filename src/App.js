@@ -27,7 +27,7 @@ function App() {
 
           <Route exact path="/join" element={<Joinpage />} />
 
-          <Route exact path="/home" element={<Homepage />} />
+          <Route exact path="/user" element={<Homepage />} />
 
 
         </Routes>

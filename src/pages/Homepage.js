@@ -13,7 +13,7 @@ import FetchCoursesData from '../utilities/FetchCoursesData';
 import FetchGolferData from '../utilities/FetchGolferData';
 import UpdateGolferRecord from '../utilities/UpdateGolferRecord';
 import clsx from 'clsx';
-import {AiFillEdit} from 'react-icons/ai'
+import { AiFillEdit } from 'react-icons/ai'
 function Homepage() {
 
     const navigate = useNavigate();
@@ -114,7 +114,7 @@ function Homepage() {
 
     }, [selectedCourse])
 
-     console.log({ preferences })
+    console.log({ preferences })
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
 
@@ -378,9 +378,9 @@ function Homepage() {
                 {golferData && <button type="button"
                     data-bs-toggle="modal" data-bs-target="#exampleModal3"
 
-                    style={{fontWeight:'700', color:'rgb(41, 47, 77)', position:'absolute'}}
+                    style={{ fontWeight: '700', color: 'rgb(41, 47, 77)', position: 'absolute' }}
                     className="inline-block rounded px-4 pt-3 pb-2 text-sm text-gray-500 font-bold uppercase leading-normal  focus:ring-0 ">
-                    <div className='flex items-center'>   <div>Edit details</div> <AiFillEdit style={{marginLeft:'5px'}} /></div>
+                    <div className='flex items-center'>   <div>Edit details</div> <AiFillEdit style={{ marginLeft: '5px' }} /></div>
                 </button>}
                 {/* Homepage: YOU ARE LOGGED IN ! {golferData.golfer_first_name} */}
                 {/* <img src={selectedCourse?.course_image} alt="" className="w-full object-cover  absolute" style={{maxHeight:'500px'}} /> */}
@@ -483,7 +483,10 @@ function Homepage() {
                                                     {hours.map((hour, i) => {
                                                         var displayHour = hour
                                                         //change hour to am or pm 
-                                                        if (hour > 12) {
+                                                        if(hour==12){
+                                                            displayHour = hour + ':00 PM'
+                                                        }
+                                                        else if (hour > 12) {
                                                             displayHour = hour - 12 + ':00 PM'
                                                         } else {
                                                             displayHour = hour + ':00 AM'
@@ -620,7 +623,7 @@ function Homepage() {
                                 <h5 className="text-gray-500 text-xl leading-tight font-medium mb-8">Active Alert</h5>
                                 {/* {alertPreferences} */}
 
-                                {Object.keys(alertPreferences).map((key, i) => {
+                                {/* {Object.keys(alertPreferences).map((key, i) => {
                                     //make key first letter uppercase, and if there's a _ replace it with a space
                                     var cleanedKey = key.replace(/_/g, ' ')
                                     cleanedKey = cleanedKey.charAt(0).toUpperCase() + cleanedKey.slice(1)
@@ -647,7 +650,28 @@ function Homepage() {
 
 
                                     </div>
-                                })}
+                                })}  */}
+                                
+                                <div className="flex  items-center mb-4 mb-4   pb-3" style={{ borderBottom: '#e7e4e4 1px solid', marginTop: '-5px' }}>
+                                    <div className='capitalize'>Course </div>
+                                    <div className='font-semibold ml-2 capitalize' > {alertPreferences['course']?.replace('_', ' ')}</div>
+                                </div>
+
+                                <div className="flex  items-center mb-4 mb-4   pb-3" style={{ borderBottom: '#e7e4e4 1px solid', marginTop: '-5px' }}>
+                                    <div className='capitalize'>Players </div>
+                                    <div className='font-semibold ml-2 capitalize' > {alertPreferences['players']?.replace('_', ' ')}</div>
+                                </div>
+
+                                <div className="flex  items-center mb-4 mb-4   pb-3" style={{ borderBottom: '#e7e4e4 1px solid', marginTop: '-5px' }}>
+                                    <div className='capitalize'>Date & Time </div>
+                                    <div className='font-semibold ml-2 capitalize' >
+                                   <span  >{alertPreferences['date']}</span> <span style={{opacity:'0.5', paddingInline:'5px'}} >/</span>
+                                         {new Date(`2023-02-17T${(alertPreferences['start_time']).padStart(2,'0')}:00`).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true })}
+                                        <span style={{opacity:'0.5', paddingInline:'5px'}} >to</span>
+                                         {new Date(`2023-02-17T${(alertPreferences['end_time']).padStart(2,'0')}:00`).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true })}
+
+                                         </div>
+                                </div>
 
                                 <div className="flex space-x-2 justify-center mt-4 mb-3">
                                     <button type="button"
@@ -680,9 +704,9 @@ function Homepage() {
                         logout()
 
                     }}
-                        style={{marginLeft:'14px'}}
+                    style={{ marginLeft: '14px' }}
                     className="px-3  py-1 m-6 bg-red-900 ml-6 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out ml-1">
-                    
+
                     LOGOUT</button>
 
             </div>

@@ -28,7 +28,7 @@ function Landingpage() {
       //navigate('/login')
     } else{
      // console.log('%c user is logged in !', 'color: green; font-size: 20px;')
-      navigate('/home')
+      navigate('/user')
  
   }
   const navLinks = [

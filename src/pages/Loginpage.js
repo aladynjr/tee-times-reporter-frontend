@@ -20,7 +20,7 @@ function LoginPage() {
      //navigate('/login')
    } else{
     // console.log('%c user is logged in !', 'color: green; font-size: 20px;')
-     navigate('/home')
+     navigate('/user')
 
  }
 
@@ -66,7 +66,7 @@ const [loginLoading, setLoginLoading] = useState(false);
 
         //localStorage.clear();
         localStorage.setItem('isUserLoggedIn', 'true');
-        navigate('/home');
+        navigate('/user');
         
       setIsUserLoggedIn(LoggedInOrNot())
 
@@ -74,7 +74,7 @@ const [loginLoading, setLoginLoading] = useState(false);
 
       // history.push("/Home")
       //window.location.reload()
-      //navigate('/Home')
+      //navigate('/user')
     } catch (error) {
       console.log(error.message);
       if (error.message == 'Firebase: Error (auth/user-not-found).') { setErrorMessage('User not found');  }

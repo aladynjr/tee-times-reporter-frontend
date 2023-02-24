@@ -23,7 +23,7 @@ function Joinpage() {
      //  navigate('/login')
      } else{
       // console.log('%c user is logged in !', 'color: green; font-size: 20px;')
-     navigate('/home')
+     navigate('/user')
 
    }
  
@@ -90,7 +90,7 @@ function Joinpage() {
             localStorage.setItem('isUserLoggedIn', JSON.stringify(true));
 
             //reload the page to update the state
-            navigate('/home');
+            navigate('/user');
             window.location.reload();
             
                 } catch (error) {
