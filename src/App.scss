@@ -519,3 +519,8 @@ color: #242555;
 .pulse1 {
     animation: pulseanim 2s infinite;
 }
+
+.form-check-input:checked {
+    background-color: #22C55E;
+    border-color: #22C55E;
+}
