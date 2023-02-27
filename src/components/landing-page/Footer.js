@@ -7,6 +7,16 @@ import { useNavigate } from 'react-router-dom';
 function Footer() {
   const navigate = useNavigate();
 
+  const handleClickScroll = (link) => {
+    const element = document.getElementById(link);
+    console.log(element)
+
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+
   return (
     <div>
           <div style={{ display: 'flex', width: '90%', maxWidth: '1200px', margin: 'auto' }} >
@@ -44,30 +54,28 @@ function Footer() {
           <div className='footer-column'>
             <div className='footer-links-title'  >Quick Links</div>
             <div>
-              <div className='footer-link' >Home </div>
-              <div className='footer-link' >Alerts </div>
-              <div className='footer-link' >Work </div>
-              <div className='footer-link' >Quick Tips </div>
-              <div className='footer-link' >Testimonial </div>
-              <div className='footer-link' >Case Study </div>
-              <div className='footer-link' >Our Story </div>
+                  
+
+              <div className='footer-link hover:cursor-pointer' onClick={()=>handleClickScroll('Home')} >Home </div>
+              <div className='footer-link hover:cursor-pointer' onClick={()=>handleClickScroll('How It Works')} >How It Works </div>
+              <div className='footer-link hover:cursor-pointer' onClick={()=>handleClickScroll('Quick Tips')} >Quick Tips </div>
+              <div className='footer-link hover:cursor-pointer' onClick={()=>handleClickScroll('Testimonials')} >Testimonials </div>
+              <div className='footer-link hover:cursor-pointer' onClick={()=>handleClickScroll('Featured Course')} >Featured Course </div>
+              <div className='footer-link hover:cursor-pointer ' style={{fontWeight:'500'}} onClick={()=>navigate('/login')} >Login </div>
             </div>
           </div>
           <div className='footer-column'>
             <div className='footer-links-title'  >Contact Us</div>
             <div>
-              <div className='footer-link' > Address: 4455 Landing Lange, APT 4 Louisville, KY 40018 </div>
-              <div className='footer-link' >Phone: (666) 478-9530 </div>
-              <div className='footer-link' >Email: hi@teatimealerts.co </div>
+              <div className='footer-link' >Email: info@teetimealerts.io </div>
 
             </div>
           </div>
           <div className='footer-column'>
             <div className='footer-links-title'  >Get Social</div>
             <div>
-              <div className='footer-link' >Instagram </div>
-              <div className='footer-link' >Facebook </div>
-              <div className='footer-link' >Twitter </div>
+              <a className='footer-link' target={'_blank'}  href={"https://www.instagram.com/teetimealerts/"} >Instagram </a>
+              <a className='footer-link' target={'_blank'}  href={'https://www.facebook.com/teetimealerts/'} >Facebook </a>
             </div>
           </div>
 

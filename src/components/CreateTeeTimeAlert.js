@@ -77,9 +77,20 @@ function CreateTeeTimeAlert({golferData, setGolferData, golferUUID, courses, set
         else setReachedAlertsCap(false)
     }, [golferData?.golfer_preferences_list?.length])
 
+    const [addAlertLoading, setAddAlertLoading] = useState(false)
+const HandleAddNewAlert = async () => {
+    if (!selectedCourse) {
+        return;
+    }
+    setAddAlertLoading(true)
+    await AddNewAlertPreferences(golferData,setGolferData, preferences, golferUUID, setAddNewAlertError, ShowNotification, setAddAlertLoading)
+    setAddAlertLoading(false)
+
+
+}
 
   return (
-    <div className="flex justify-center" id={"main"}>
+    <div className="flex justify-center  " id={"main"}>
 
     <div className="block  rounded-lg shadow-lg bg-white mt-20  " style={{ width: '90%', maxWidth: '540px', zIndex: '1', /*background: 'linear-gradient(0deg, #ffffff 91%, #16a34a 40%)' */ }}>
         <h5 className="text-gray-900 text-white text-xl leading-tight  mb-2 flex items-center content-center "
@@ -275,20 +286,18 @@ function CreateTeeTimeAlert({golferData, setGolferData, golferUUID, courses, set
             </div>}
             <div className="flex space-x-2 justify-center mt-12 mb-4">
                 <button type="button"
-                    /* onClick={() => {
-                        // UpdateGolferRecord(golferData.golfer_id, ["golfer_preferences"], [JSON.stringify(preferences)])
-                        //AddNewAlertPreferences(golferData.golfer_id, (preferences))
-                     }}*/
+  
 
-                    data-bs-toggle="modal" data-bs-target="#exampleModal"
+                   // data-bs-toggle="modal" data-bs-target="#exampleModal"
                     style={{
-                        opacity: addNewAlertLoading ? '0.5' : '1',
-                        backgroundColor: reachedAlertsCap && '#e7e4e4',
-                        color: reachedAlertsCap && '#a8a8a8',
-                        pointerEvents: reachedAlertsCap && 'none'
+                        opacity: addNewAlertLoading || addAlertLoading ? '0.5' : '1',
+                        backgroundColor: addNewAlertLoading || addAlertLoading && '#e7e4e4',
+                        color: addNewAlertLoading || addAlertLoading && '#a8a8a8',
+                        pointerEvents: addNewAlertLoading || addAlertLoading && 'none'
                     }}
 
-                    className="inline-block px-10 py-4 bg-green-600 text-white font-medium text-sm leading-tight uppercase rounded shadow-md hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg transition duration-150 ease-in-out w-[100%] mb-2">
+                    className="inline-block px-10 py-4 bg-green-600 text-white font-medium text-sm leading-tight uppercase rounded shadow-md hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg transition duration-150 ease-in-out w-[100%] mb-2"
+                    onClick={()=>HandleAddNewAlert()} >
                     Create Alert
                 </button>
             </div>
@@ -324,7 +333,6 @@ function CreateTeeTimeAlert({golferData, setGolferData, golferUUID, courses, set
 
                                         return;
                                     }
-                                    // UpdateGolferRecord(golferData.golfer_id, ["golfer_preferences"], [JSON.stringify(preferences)])
                                     AddNewAlertPreferences(golferData,setGolferData, preferences, golferUUID, setAddNewAlertError, ShowNotification)
 
                                 }}

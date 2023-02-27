@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import { AiFillEdit } from 'react-icons/ai'
 import { signOut, onAuthStateChanged, updateEmail, reauthenticateWithCredential, EmailAuthProvider, getAuth } from "firebase/auth";
 import clsx from 'clsx';
@@ -8,8 +8,10 @@ import UpdateGolferRecord from '../utilities/UpdateGolferRecord';
 function EditAccountDetails({
     golferData,
     setGolferData,
-    ShowNotification
+    ShowNotification,
+    inputRef
 }) {
+
     const auth = getAuth()
     const [settingsTab, setSettingsTab] = useState('profile')
 
@@ -28,7 +30,7 @@ function EditAccountDetails({
         setFirstName(golferData.golfer_first_name)
         setLastName(golferData.golfer_last_name)
         setEmail(golferData.golfer_email)
-        setPhoneNumber(golferData.golfer_phone_number)
+        setPhoneNumber(golferData.golfer_phone)
 
         setAllowSMS(golferData.golfer_allow_sms)
         setAllowEmail(golferData.golfer_allow_email)
@@ -40,12 +42,12 @@ function EditAccountDetails({
         if (golferData.golfer_first_name == firstName
             && golferData.golfer_last_name == lastName
             && golferData.golfer_email == email
-            && golferData.golfer_phone_number == phoneNumber
+            && golferData.golfer_phone == phoneNumber
             && golferData.golfer_allow_email == allowEmail
             && golferData.golfer_allow_sms == allowSMS)
-             setAllowSavingChanges(false)
+            setAllowSavingChanges(false)
         else setAllowSavingChanges(true)
-    },[
+    }, [
         firstName,
         lastName,
         email,
@@ -101,7 +103,7 @@ function EditAccountDetails({
             newGolferData.golfer_first_name = firstName
             newGolferData.golfer_last_name = lastName
             newGolferData.golfer_email = email
-            newGolferData.golfer_phone_number = phoneNumber
+            newGolferData.golfer_phone = phoneNumber
             newGolferData.golfer_allow_email = allowEmail
             newGolferData.golfer_allow_sms = allowSMS
 
@@ -121,14 +123,15 @@ function EditAccountDetails({
     return (
         <div>
             <button type="button"
+                ref={inputRef}
                 data-bs-toggle="modal" data-bs-target="#exampleModal3"
-                style={{ fontWeight: '700', color: 'rgb(41, 47, 77)', position: 'absolute' }}
+                style={{ fontWeight: '700', color: 'rgb(41, 47, 77)'/*, position: 'absolute', right:'14px' */ }}
                 className="inline-block rounded px-4 pt-3 pb-2 text-sm text-gray-500 font-bold uppercase leading-normal  focus:ring-0 ">
-                <div className='flex items-center'>   <div>Edit details</div> <AiFillEdit style={{ marginLeft: '5px' }} /></div>
+                <div className='flex items-center hidden'>   <div>Edit Account Settings</div> <AiFillEdit style={{ marginLeft: '5px', }} /></div>
             </button>
 
 
-            <div className="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
+            <div className="modal fade fixed visible top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
                 id="exampleModal3" tabIndex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
                 <div className="modal-dialog modal-lg relative w-auto pointer-events-none" >
                     <div
@@ -219,29 +222,39 @@ function EditAccountDetails({
                                 </div>
                             </div>}
 
-                            {settingsTab == 'preferences' && <div style={{paddingTop:'5px', paddingLeft:'12px'}}>
-                                    <div className="form-check form-switch pb-10">
-                                        <input className="form-check-input appearance-none w-9 -ml-10 rounded-full float-left h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm" style={{ transform: 'scale(1.5)' }} 
+                            {settingsTab == 'preferences' && <div style={{ paddingTop: '5px', paddingLeft: '12px' }}>
+                                <div className="form-check form-switch pb-10">
+                                    <input className="form-check-input appearance-none w-9 -ml-10 rounded-full float-left h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm" style={{ transform: 'scale(1.5)' }}
                                         checked={allowEmail}
-                                        onChange={(e)=>{
+                                        onChange={(e) => {
                                             setAllowEmail(e.target.checked)
                                         }}
-                                         type="checkbox" role="switch" id="flexSwitchCheckDefault" />
-                                        <label className="form-check-label inline-block pl-10 text-gray-800" for="flexSwitchCheckDefault">Send via <b>email</b></label>
-                                    </div>
-                                    <div className="form-check form-switch pb-10">
-                                        <input className="form-check-input appearance-none w-9 -ml-10 rounded-full float-left h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm" style={{ transform: 'scale(1.5)' }} 
+                                        type="checkbox" role="switch" id="flexSwitchCheckDefault" />
+                                    <label className="form-check-label inline-block pl-10 text-gray-800" htmlFor="flexSwitchCheckDefault">Send via <b>email</b></label>
+                                </div>
+                                <div className="form-check form-switch pb-10">
+                                    <input className="form-check-input appearance-none w-9 -ml-10 rounded-full float-left h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm" style={{ transform: 'scale(1.5)' }}
                                         checked={allowSMS}
-                                        onChange={(e)=>{
+                                        onChange={(e) => {
                                             setAllowSMS(e.target.checked)
                                         }}
                                         type="checkbox" role="switch" id="flexSwitchCheckDefault" />
-                                        <label className="form-check-label inline-block pl-10 text-gray-800" for="flexSwitchCheckDefault">Send via <b>SMS</b></label>
-                                    </div>
+                                    <label className="form-check-label inline-block pl-10 text-gray-800" htmlFor="flexSwitchCheckDefault">Send via <b>SMS</b></label>
+                                </div>
                             </div>}
                             {settingsTab == "billing" && <div>
-                                                                    <p className='text-gray-400 p-10 m-auto' >Coming soon!</p>
-                                                                    </div>}
+                                <p className='text-gray-400 p-10 m-auto' >Coming soon!</p>
+                            </div>}
+                            {settingsTab == "account" && <div>
+                                <div className="form-check form-switch pb-10">
+                                    <input className="form-check-input form-check-input2 appearance-none w-9 -ml-10 rounded-full float-left h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm" style={{ transform: 'scale(1.5)' }}
+                                       /* checked={allowEmail}
+                                        onChange={(e) => {
+                                            setAllowEmail(e.target.checked)
+                                        }}*/
+                                        type="checkbox" role="switch" id="flexSwitchCheckDefault" />
+                                    <label className="form-check-label inline-block pl-10 text-gray-800" htmlFor="flexSwitchCheckDefault">Deactivate <b>everything</b> (alerts, billing) and <b>delete</b> after 15 days </label>
+                                </div>                            </div>}
                         </div>
                         <div
                             className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">

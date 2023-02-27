@@ -3,10 +3,11 @@ import globalVal from '../globalVal'
 import FetchGolferData from './FetchGolferData'
 
 
-const AddNewAlertPreferences = async (golferData, setGolferData, preferences, golferUUID, setAddNewAlertError, ShowNotification) => {
+const AddNewAlertPreferences = async (golferData, setGolferData, preferences, golferUUID, setAddNewAlertError, ShowNotification, setAddAlertLoading=()=>{}) => {
 
     const CheckForDuplicateAlerts = () => {
         setAddNewAlertError('')
+        setAddAlertLoading(true)
         var golferPreferencesList = golferData?.golfer_preferences_list
 
         //check that none of the preferences are the same as preferences state without comparing each element in the object
@@ -52,6 +53,7 @@ const AddNewAlertPreferences = async (golferData, setGolferData, preferences, go
     }
     finally {
         // setAddNewAlertLoading(false)
+        setAddAlertLoading(false)
     }
 }
 
