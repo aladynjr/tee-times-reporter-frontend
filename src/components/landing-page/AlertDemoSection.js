@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useReducer } from 'react'
-import globalVal from '../globalVal'
-import FetchCoursesData from '../utilities/FetchCoursesData'
-import GenerateDatesForNext7Days from '../utilities/GenerateDatesForNext7Days'
+import globalVal from '../../globalVal'
+import FetchCoursesData from '../../utilities/FetchCoursesData'
+import GenerateDatesForNext7Days from '../../utilities/GenerateDatesForNext7Days'
 
 import { useNavigate } from 'react-router-dom';
 

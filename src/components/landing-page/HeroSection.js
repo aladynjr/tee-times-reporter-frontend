@@ -1,7 +1,7 @@
 
 
 import React from 'react'
-import HeroIllustration from '../assets/images/hero.svg'
+import HeroIllustration from '../../assets/images/hero.svg'
 import { useNavigate } from 'react-router-dom';
 
 

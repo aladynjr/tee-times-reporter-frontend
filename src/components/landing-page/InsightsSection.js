@@ -1,6 +1,6 @@
 import React,{useState, useEffect} from 'react'
-import GolfPlayers from '../assets/images/golf-players.svg'
-import Blob from '../assets/images/blob.svg'
+import GolfPlayers from '../../assets/images/golf-players.svg'
+import Blob from '../../assets/images/blob.svg'
 
 function InsightsSection() {
 

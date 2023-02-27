@@ -1,6 +1,6 @@
 import React,{useEffect, useState} from 'react'
-import Logo from '../assets/images/logo.svg'
-import MenuIcon from '../assets/images/menu-icon.svg'
+import Logo from '../../assets/images/logo.svg'
+import MenuIcon from '../../assets/images/menu-icon.svg'
 import { useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import Guide1 from '../assets/images/guide-1.svg'
-import Guide2 from '../assets/images/guide-2.svg'
-import Guide3 from '../assets/images/guide-3.svg'
-import Guide4 from '../assets/images/guide-4.svg'
+import Guide1 from '../../assets/images/guide-1.svg'
+import Guide2 from '../../assets/images/guide-2.svg'
+import Guide3 from '../../assets/images/guide-3.svg'
+import Guide4 from '../../assets/images/guide-4.svg'
 
-import DashedLine1 from '../assets/images/dashed-line-1.svg'
-import DashedLine2 from '../assets/images/dashed-line-2.svg'
-import DashedLine3 from '../assets/images/dashed-line-3.svg'
+import DashedLine1 from '../../assets/images/dashed-line-1.svg'
+import DashedLine2 from '../../assets/images/dashed-line-2.svg'
+import DashedLine3 from '../../assets/images/dashed-line-3.svg'
 
 function GuideSection() {
   const guideSteps = [

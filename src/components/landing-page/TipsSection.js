@@ -1,7 +1,8 @@
 import React from 'react'
-import TipsIcon1 from '../assets/images/tips-1.svg'
-import TipsIcon2 from '../assets/images/tips-2.svg'
-import TipsIcon3 from '../assets/images/tips-3.svg'
+import TipsIcon1 from '../../assets/images/tips-1.svg'
+import TipsIcon2 from '../../assets/images/tips-2.svg'
+import TipsIcon3 from '../../assets/images/tips-3.svg'
+
 function TipsSection() {
     
   const tips = [

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import TestimonialsBG from '../assets/images/testimonials-bg.svg'
+import TestimonialsBG from '../../assets/images/testimonials-bg.svg'
 
-import Testimonial1 from '../assets/images/testimonial-1.png'
-import Testimonial2 from '../assets/images/testimonial-2.png'
-import Testimonial3 from '../assets/images/testimonial-3.png'
+import Testimonial1 from '../../assets/images/testimonial-1.png'
+import Testimonial2 from '../../assets/images/testimonial-2.png'
+import Testimonial3 from '../../assets/images/testimonial-3.png'
 import { BsChevronRight } from 'react-icons/bs'
 import { BsChevronLeft } from 'react-icons/bs'
 import Slider from "react-slick";

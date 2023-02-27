@@ -1,7 +1,7 @@
 import React from 'react'
-import GolfCart from '../assets/images/golf-cart.svg'
-import GolfCartShadow from '../assets/images/golf-cart-shadow.svg'
-import Logo from '../assets/images/logo.svg'
+import GolfCart from '../../assets/images/golf-cart.svg'
+import GolfCartShadow from '../../assets/images/golf-cart-shadow.svg'
+import Logo from '../../assets/images/logo.svg'
 import { useNavigate } from 'react-router-dom';
 
 function Footer() {

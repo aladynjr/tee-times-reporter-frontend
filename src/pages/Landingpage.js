@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 
 import { auth } from "../firebase-config";
-import Navbar from '../components/Navbar';
-import HeroSection from '../components/HeroSection';
-import AlertDemoSection from '../components/AlertDemoSection';
-import GuideSection from '../components/GuideSection';
-import TipsSection from '../components/TipsSection';
-import Footer from '../components/Footer';
-import InsightsSection from '../components/InsightsSection';
-import TestimonialsSection from '../components/TestimonialsSection';
+import Navbar from '../components/landing-page/Navbar';
+import HeroSection from '../components/landing-page/HeroSection';
+import AlertDemoSection from '../components/landing-page/AlertDemoSection';
+import GuideSection from '../components/landing-page/GuideSection';
+import TipsSection from '../components/landing-page/TipsSection';
+import Footer from '../components/landing-page/Footer';
+import InsightsSection from '../components/landing-page/InsightsSection';
+import TestimonialsSection from '../components/landing-page/TestimonialsSection';
 import {signInWithEmailAndPassword} from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
 import LoggedInOrNot from '../utilities/LoggedInOrNot';
