@@ -15,7 +15,11 @@ function Joinpage() {
    const [isUserLoggedIn, setIsUserLoggedIn] = useState(null);
 
    useEffect(()=>{
-     setIsUserLoggedIn(LoggedInOrNot())
+    const HandleSession = async () => {
+        setIsUserLoggedIn(await LoggedInOrNot())
+
+    }
+    HandleSession()
    },[])
    
    if (!isUserLoggedIn) {

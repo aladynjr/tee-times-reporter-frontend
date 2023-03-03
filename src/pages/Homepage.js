@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { signOut, onAuthStateChanged } from "firebase/auth";
+import { signOut, onAuthStateChanged , getAuth} from "firebase/auth";
 import { auth } from "../firebase-config";
 import { useNavigate } from 'react-router-dom';
 import LoggedInOrNot from '../utilities/LoggedInOrNot';
@@ -30,8 +30,27 @@ function Homepage() {
 
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(null);
 
-    useEffect(() => {
-        setIsUserLoggedIn(LoggedInOrNot())
+    useEffect( () => {
+        const HandleSession = async () => {
+            setIsUserLoggedIn(await LoggedInOrNot())
+            // //if user is not logged in, redirect to login page
+            // const auth = getAuth();
+            // //wait until auth is loaded
+            // await new Promise((resolve) => {
+            //     const unsubscribe = onAuthStateChanged(auth, (user) => {
+            //         unsubscribe();
+            //         resolve(user);
+            //     });
+            // });
+            
+            // if (!auth.currentUser) {
+            //     console.log('user is not logged in !')
+            //     navigate('/login')
+            //   localStorage.removeItem('isUserLoggedIn');  
+            // }
+        }
+        HandleSession()
+          
     }, [])
 
     if (!isUserLoggedIn) {
@@ -47,6 +66,7 @@ function Homepage() {
                 setGolferUUID(currentUser.uid)
             }
         });
+      
 
     }, [auth])
 

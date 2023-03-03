@@ -12,8 +12,11 @@ function LoginPage() {
  const [isUserLoggedIn, setIsUserLoggedIn] = useState(null);
 
  useEffect(()=>{
-   setIsUserLoggedIn(LoggedInOrNot())
- },[])
+  const HandleSession = async () => {
+    setIsUserLoggedIn(await LoggedInOrNot())
+
+}
+HandleSession() },[])
  
  if (!isUserLoggedIn) {
   // console.log('%c user is not logged in !', 'color: red; font-size: 20px;')
@@ -68,8 +71,11 @@ const [loginLoading, setLoginLoading] = useState(false);
         localStorage.setItem('isUserLoggedIn', 'true');
         navigate('/user');
         
-      setIsUserLoggedIn(LoggedInOrNot())
+        const HandleSession = async () => {
+          setIsUserLoggedIn(await LoggedInOrNot())
 
+      }
+      HandleSession()
     
 
       // history.push("/Home")

@@ -1,5 +1,6 @@
 import React from 'react'
 import globalVal from '../globalVal'
+import Logout from './Logout'
 
 const FetchGolferData = async (golferUUID) => {
     try {
@@ -18,7 +19,11 @@ const FetchGolferData = async (golferUUID) => {
 
         return jsonData
     } catch (err) {
-        console.error(err.message);
+        console.error('error fetching golfer data : ' + err.message);
+        if(err){
+                console.log('logging out ')
+            Logout()
+        }
     }
 }
 

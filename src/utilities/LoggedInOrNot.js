@@ -4,7 +4,7 @@ import { auth } from "../firebase-config";
 
 
 
-const LoggedInOrNot = () => {
+const LoggedInOrNot = async () => {
     var isUserLoggedIn = false;
         const checkIfUserIsLoggedIn = async () => {
           onAuthStateChanged(auth, (currentUser) => {
@@ -17,6 +17,8 @@ const LoggedInOrNot = () => {
               localStorage.setItem('isUserLoggedIn', JSON.stringify(false));
             }
           });
+
+
         };
         
         const storedValue = localStorage.getItem('isUserLoggedIn');
@@ -25,7 +27,7 @@ const LoggedInOrNot = () => {
           isUserLoggedIn = JSON.parse(storedValue);
         } else {
           console.log('storedValue: ', storedValue);
-          checkIfUserIsLoggedIn();
+          await checkIfUserIsLoggedIn();
         }
 
       return isUserLoggedIn;

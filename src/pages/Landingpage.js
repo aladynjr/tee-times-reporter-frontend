@@ -20,7 +20,11 @@ function Landingpage() {
 
   useEffect(()=>{
     if(window.location.pathname.includes('landing')) return
-    setIsUserLoggedIn(LoggedInOrNot())
+    const HandleSession = async () => {
+      setIsUserLoggedIn(await LoggedInOrNot())
+
+  }
+  HandleSession()
   },[])
   
   if (!isUserLoggedIn) {
