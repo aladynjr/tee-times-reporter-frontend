@@ -4,7 +4,21 @@ import { IoGolf } from 'react-icons/io5'
 import GenerateDatesForNext7Days from '../utilities/GenerateDatesForNext7Days';
 import AddNewAlertPreferences from '../utilities/AddNewAlertPreferences';
 function CreateTeeTimeAlert({golferData, setGolferData, golferUUID, courses, setSelectedCourseID, selectedCourse, ShowNotification}) {
+  
 
+    const ResetAllSelectFields = (preferences) => {
+        selectedCourse.course_fields_and_options.forEach(fieldAndOptions => {
+            const selectElement = document.querySelector(`select[name="${fieldAndOptions.field_name}"]`);
+            if (selectElement) {
+                console.log(selectElement)
+                console.log('old value : ' +  selectElement.value)
+                console.log('new value : ' +  preferences[fieldAndOptions.field_name])
+              selectElement.value = preferences[fieldAndOptions.field_name];
+              
+            }        }
+        )
+    
+      }
     
     const [preferences, setPreferences] = useState({})
     console.log({ preferences })
@@ -14,6 +28,8 @@ function CreateTeeTimeAlert({golferData, setGolferData, golferUUID, courses, set
             setPreferences({})
             return;
         }
+       
+
 
         var preferences = {}
         selectedCourse.course_fields_and_options.forEach(fieldAndOptions => {
@@ -34,6 +50,11 @@ function CreateTeeTimeAlert({golferData, setGolferData, golferUUID, courses, set
         })
         preferences['course'] = selectedCourse?.course_name
         setPreferences(preferences)
+
+        if(preferences){
+
+            ResetAllSelectFields(preferences)
+        }
 
     }, [selectedCourse])
 
@@ -89,9 +110,12 @@ const HandleAddNewAlert = async () => {
 
 }
 
+
+
+
   return (
     <div className="flex justify-center  " id={"main"}>
-
+        <button onClick={ResetAllSelectFields} >RESSSSSSSSSSET</button>
     <div className="block  rounded-lg shadow-lg bg-white mt-20  " style={{ width: '90%', maxWidth: '540px', zIndex: '1', /*background: 'linear-gradient(0deg, #ffffff 91%, #16a34a 40%)' */ }}>
         <h5 className="text-gray-900 text-white text-xl leading-tight  mb-2 flex items-center content-center "
             style={{ fontWeight: '300', color: 'white', padding: '20px', borderTopRightRadius: '10px', borderTopLeftRadius: '10px', background: '#16a34a' }}>
@@ -117,7 +141,7 @@ const HandleAddNewAlert = async () => {
                 <IoGolf style={{ fontSize: '23px', marginRight: '10px' }} />
 
                 <label className="block  text-lg text-gray-700 whitespace-nowrap">Course</label>
-                <select onChange={(e) => setSelectedCourseID(e.target.value)}
+                <select onChange={(e) => {setSelectedCourseID(e.target.value)}}
                     // className="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" 
                     className="  block w-full px-3 py-1.5 text-lg font-semibold text-gray-900 bg-white bg-clip-padding cursor-pointer outline-none caret-pink-500 "
 

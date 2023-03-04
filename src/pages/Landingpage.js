@@ -19,7 +19,7 @@ function Landingpage() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(null);
 
   useEffect(()=>{
-    if(window.location.pathname.includes('landing')) return
+    if(window.location.pathname.includes('welcome')) return
     const HandleSession = async () => {
       setIsUserLoggedIn(await LoggedInOrNot())
 
@@ -32,7 +32,7 @@ function Landingpage() {
       //navigate('/login')
     } else{
      // console.log('%c user is logged in !', 'color: green; font-size: 20px;')
-      //navigate('/user')
+      navigate('/user')
  
   }
   const navLinks = [

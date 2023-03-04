@@ -141,7 +141,7 @@ function Homepage() {
 
             <div style={{ background:'white', paddingBottom:'5px'}} className='shadow-sm'>
                 <div style={{width:'90%', maxWidth:'1700px', display:'flex', justifyContent: 'space-between', margin:'auto'}}>
-                <img src={Logo} alt="logo" style={{ marginLeft: '20px', marginTop: '10px', }} onClick={() => navigate('/')} className=' w-[180px] cursor-pointer' />
+                <img src={Logo} alt="logo" style={{ marginLeft: '20px', marginTop: '10px', }} onClick={() => navigate('/welcome')} className=' w-[180px] cursor-pointer' />
 
                 <div className="dropdown " style={{ marginRight: '5px', marginTop: '20px', width:'fit-content' }} >
                     <button
@@ -217,6 +217,7 @@ function Homepage() {
                 setGolferData={setGolferData}
                 golferUUID={golferUUID}
                 courses={courses}
+                
                 setSelectedCourseID={setSelectedCourseID}
                 selectedCourse={selectedCourse}
                 ShowNotification={ShowNotification}
