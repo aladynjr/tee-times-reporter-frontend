@@ -14,7 +14,7 @@ function CreatedAlerts({
         <div>
             {!golferData?.golfer_preferences_list.length &&
                 <div className="flex justify-center">
-                    <div className="block p-6 pt-4 rounded-lg shadow-lg bg-white mt-6 mb-64  " style={{ width: '90%', maxWidth: '540px', zIndex: '1' }}>
+                    <div className="block p-6 pt-4 rounded-lg shadow-lg bg-white mt-6 pb-64  " style={{ width: '90%', maxWidth: '540px', zIndex: '1' }}>
                         <p className="text-gray-500  text-lg flex content-center " style={{ margin: 'auto', marginBlock: '18px' }}>
                             You have not created any alerts yet
                         </p>

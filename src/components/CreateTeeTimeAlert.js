@@ -115,7 +115,7 @@ const HandleAddNewAlert = async () => {
 
   return (
     <div className="flex justify-center  " id={"main"}>
-        <button onClick={ResetAllSelectFields} >RESSSSSSSSSSET</button>
+        {/* <button onClick={ResetAllSelectFields} >RESSSSSSSSSSET</button> */}
     <div className="block  rounded-lg shadow-lg bg-white mt-20  " style={{ width: '90%', maxWidth: '540px', zIndex: '1', /*background: 'linear-gradient(0deg, #ffffff 91%, #16a34a 40%)' */ }}>
         <h5 className="text-gray-900 text-white text-xl leading-tight  mb-2 flex items-center content-center "
             style={{ fontWeight: '300', color: 'white', padding: '20px', borderTopRightRadius: '10px', borderTopLeftRadius: '10px', background: '#16a34a' }}>
