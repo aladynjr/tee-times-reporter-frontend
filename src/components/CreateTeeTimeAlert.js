@@ -314,10 +314,10 @@ const HandleAddNewAlert = async () => {
 
                    // data-bs-toggle="modal" data-bs-target="#exampleModal"
                     style={{
-                        opacity: addNewAlertLoading || addAlertLoading ? '0.5' : '1',
-                        backgroundColor: addNewAlertLoading || addAlertLoading && '#e7e4e4',
-                        color: addNewAlertLoading || addAlertLoading && '#a8a8a8',
-                        pointerEvents: addNewAlertLoading || addAlertLoading && 'none'
+                        opacity: addNewAlertLoading || addAlertLoading || reachedAlertsCap ? '0.5' : '1',
+                        backgroundColor: addNewAlertLoading || addAlertLoading || reachedAlertsCap && '#e7e4e4',
+                        color: addNewAlertLoading || addAlertLoading || reachedAlertsCap && '#a8a8a8',
+                        pointerEvents: addNewAlertLoading || addAlertLoading || reachedAlertsCap && 'none'
                     }}
 
                     className="inline-block px-10 py-4 bg-green-600 text-white font-medium text-sm leading-tight uppercase rounded shadow-md hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg transition duration-150 ease-in-out w-[100%] mb-2"
