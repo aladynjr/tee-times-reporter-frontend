@@ -36,12 +36,12 @@ function CreatedAlerts({
                                     cleanedKey = cleanedKey.charAt(0).toUpperCase() + cleanedKey.slice(1)
 
             
-                                    var date = new Date(alertPreferences[key])
+                                    var date = new Date(alertPreferences?.[key])
 
 
                                     return <div key={i} className="flex  items-center mb-4 mb-4   pb-3" style={{ borderBottom: '#e7e4e4 1px solid', marginTop: '-5px' }}>
                                         <div className='capitalize'>{cleanedKey} </div>
-                                        <div className='font-semibold ml-2 capitalize' > {alertPreferences[key]?.replace('_',' ')}{(key == 'start_time' || key == 'end_time') && ':00'} </div>
+                                        <div className='font-semibold ml-2 capitalize' > {alertPreferences?.[key]?.replace('_',' ')}{(key == 'start_time' || key == 'end_time') && ':00'} </div>
 
 
 
@@ -61,21 +61,21 @@ function CreatedAlerts({
 
                             <div className="flex  items-center mb-4 mb-4   pb-3" style={{ borderBottom: '#e7e4e4 1px solid', marginTop: '-5px' }}>
                                 <div className='capitalize'>Course </div>
-                                <div className='font-semibold ml-2 capitalize' > {alertPreferences['course']?.replace('_', ' ')}</div>
+                                <div className='font-semibold ml-2 capitalize' > {alertPreferences?.['course']?.replace('_', ' ')}</div>
                             </div>
 
                             <div className="flex  items-center mb-4 mb-4   pb-3" style={{ borderBottom: '#e7e4e4 1px solid', marginTop: '-5px' }}>
                                 <div className='capitalize'>Players </div>
-                                <div className='font-semibold ml-2 capitalize' > {alertPreferences['players']?.replace('_', ' ')}</div>
+                                <div className='font-semibold ml-2 capitalize' > {alertPreferences?.['players']?.replace('_', ' ')}</div>
                             </div>
 
                             <div className="flex  items-center mb-4 mb-4   pb-3" style={{ borderBottom: '#e7e4e4 1px solid', marginTop: '-5px' }}>
                                 <div className='capitalize'>Date & Time </div>
                                 <div className='font-semibold ml-2 capitalize' >
-                                    <span  >{alertPreferences['date']}</span> <span style={{ opacity: '0.5', paddingInline: '5px' }} >/</span>
-                                    {new Date(`2023-02-17T${(alertPreferences['start_time']).padStart(2, '0')}:00`).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true })}
+                                    <span  >{alertPreferences?.['date']}</span> <span style={{ opacity: '0.5', paddingInline: '5px' }} >/</span>
+                                    {new Date(`2023-02-17T${(alertPreferences?.['start_time']).padStart(2, '0')}:00`).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true })}
                                     <span style={{ opacity: '0.5', paddingInline: '5px' }} >to</span>
-                                    {new Date(`2023-02-17T${(alertPreferences['end_time']).padStart(2, '0')}:00`).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true })}
+                                    {new Date(`2023-02-17T${(alertPreferences?.['end_time']).padStart(2, '0')}:00`).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true })}
 
                                 </div>
                             </div>

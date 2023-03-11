@@ -78,7 +78,7 @@ function Joinpage() {
         else setErrorMessage('')
 
         console.log('user is valid, creating account...')
-        
+        window.fbq('track', 'CompleteRegistration')
         
         //add user to firebase
         try {
@@ -113,6 +113,13 @@ function Joinpage() {
 
     return (
         <div>
+          <button onClick={()=>{
+                //window.fbq('track', 'AccountCreation')
+                window.fbq('track', 'CompleteRegistration')
+                //window.fbq('track', 'Complete registration')
+
+                console.log('registration event sent')
+                }}>TEST REGISTRATION</button> 
             <div className='JoinForm' >
 
                 <div className="block p-6 rounded-lg shadow-lg bg-white max-w-md m-auto w-[90%] mt-[75px]">

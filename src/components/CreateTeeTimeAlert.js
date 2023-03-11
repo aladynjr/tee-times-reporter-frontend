@@ -1,25 +1,26 @@
-import React,{useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import { IoTimeSharp } from 'react-icons/io5'
 import { IoGolf } from 'react-icons/io5'
 import GenerateDatesForNext7Days from '../utilities/GenerateDatesForNext7Days';
 import AddNewAlertPreferences from '../utilities/AddNewAlertPreferences';
-function CreateTeeTimeAlert({golferData, setGolferData, golferUUID, courses, setSelectedCourseID, selectedCourse, ShowNotification}) {
-  
+function CreateTeeTimeAlert({ golferData, setGolferData, golferUUID, courses, setSelectedCourseID, selectedCourse, ShowNotification }) {
+
 
     const ResetAllSelectFields = (preferences) => {
         selectedCourse.course_fields_and_options.forEach(fieldAndOptions => {
             const selectElement = document.querySelector(`select[name="${fieldAndOptions.field_name}"]`);
             if (selectElement) {
                 console.log(selectElement)
-                console.log('old value : ' +  selectElement.value)
-                console.log('new value : ' +  preferences[fieldAndOptions.field_name])
-              selectElement.value = preferences[fieldAndOptions.field_name];
-              
-            }        }
+                console.log('old value : ' + selectElement.value)
+                console.log('new value : ' + preferences[fieldAndOptions.field_name])
+                selectElement.value = preferences[fieldAndOptions.field_name];
+
+            }
+        }
         )
-    
-      }
-    
+
+    }
+
     const [preferences, setPreferences] = useState({})
     console.log({ preferences })
 
@@ -28,7 +29,7 @@ function CreateTeeTimeAlert({golferData, setGolferData, golferUUID, courses, set
             setPreferences({})
             return;
         }
-       
+
 
 
         var preferences = {}
@@ -51,7 +52,7 @@ function CreateTeeTimeAlert({golferData, setGolferData, golferUUID, courses, set
         preferences['course'] = selectedCourse?.course_name
         setPreferences(preferences)
 
-        if(preferences){
+        if (preferences) {
 
             ResetAllSelectFields(preferences)
         }
@@ -94,113 +95,160 @@ function CreateTeeTimeAlert({golferData, setGolferData, golferUUID, courses, set
 
     const [reachedAlertsCap, setReachedAlertsCap] = useState(false)
     useEffect(() => {
+        if (golferData?.golfer_admin) return
+
         if (golferData?.golfer_preferences_list?.length >= 5) setReachedAlertsCap(true)
         else setReachedAlertsCap(false)
     }, [golferData?.golfer_preferences_list?.length])
 
+
     const [addAlertLoading, setAddAlertLoading] = useState(false)
-const HandleAddNewAlert = async () => {
-    if (!selectedCourse) {
-        return;
+
+
+    const HandleAddNewAlert = async () => {
+        if (!selectedCourse) {
+            return;
+        }
+        setAddAlertLoading(true)
+        await AddNewAlertPreferences(golferData, setGolferData, preferences, golferUUID, setAddNewAlertError, ShowNotification, setAddAlertLoading)
+        setAddAlertLoading(false)
+
+
     }
-    setAddAlertLoading(true)
-    await AddNewAlertPreferences(golferData,setGolferData, preferences, golferUUID, setAddNewAlertError, ShowNotification, setAddAlertLoading)
-    setAddAlertLoading(false)
-
-
-}
 
 
 
 
-  return (
-    <div className="flex justify-center  " id={"main"}>
-        {/* <button onClick={ResetAllSelectFields} >RESSSSSSSSSSET</button> */}
-    <div className="block  rounded-lg shadow-lg bg-white mt-20  " style={{ width: '90%', maxWidth: '540px', zIndex: '1', /*background: 'linear-gradient(0deg, #ffffff 91%, #16a34a 40%)' */ }}>
-        <h5 className="text-gray-900 text-white text-xl leading-tight  mb-2 flex items-center content-center "
-            style={{ fontWeight: '300', color: 'white', padding: '20px', borderTopRightRadius: '10px', borderTopLeftRadius: '10px', background: '#16a34a' }}>
-            <IoTimeSharp style={{ marginRight: '12px' }} /> Create a Tee Time Alert
-        </h5>
+    return (
+        <div className="flex justify-center  " id={"main"}>
+            {/* <button onClick={ResetAllSelectFields} >RESSSSSSSSSSET</button> */}
+            <div className="block  rounded-lg shadow-lg bg-white mt-20  " style={{ width: '90%', maxWidth: '540px', zIndex: '1', /*background: 'linear-gradient(0deg, #ffffff 91%, #16a34a 40%)' */ }}>
+                <h5 className="text-gray-900 text-white text-xl leading-tight  mb-2 flex items-center content-center "
+                    style={{ fontWeight: '300', color: 'white', padding: '20px', borderTopRightRadius: '10px', borderTopLeftRadius: '10px', background: '#16a34a' }}>
+                    <IoTimeSharp style={{ marginRight: '12px' }} /> Create a Tee Time Alert
+                </h5>
 
-        {!(golferData && courses?.length) && <div>
-            <div role="status" className="pulse1 ">
-                <div className="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{ width: '90%', margin: 'auto', marginBlock: '20px' }} ></div>
-                <div className="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{ width: '90%', margin: 'auto', marginBlock: '20px' }} ></div>
-                <div className="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{ width: '90%', margin: 'auto', marginBlock: '20px' }} ></div>
-                <div className="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{ width: '90%', margin: 'auto', marginBlock: '20px' }} ></div>
+                {!(golferData && courses?.length) && <div>
+                    <div role="status" className="pulse1 ">
+                        <div className="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{ width: '90%', margin: 'auto', marginBlock: '20px' }} ></div>
+                        <div className="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{ width: '90%', margin: 'auto', marginBlock: '20px' }} ></div>
+                        <div className="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{ width: '90%', margin: 'auto', marginBlock: '20px' }} ></div>
+                        <div className="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{ width: '90%', margin: 'auto', marginBlock: '20px' }} ></div>
 
-                <div className="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{ width: '60%', margin: 'auto', marginBlock: '20px', marginTop: '40px' }} ></div>
+                        <div className="h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4 " style={{ width: '60%', margin: 'auto', marginBlock: '20px', marginTop: '40px' }} ></div>
 
-                <span className="sr-only">Loading...</span>
-            </div>
-        </div>}
-
-
-        {golferData && courses?.length && <div className='options  mt-2 p-6 pt-4' >
-            <div className="mb-3  flex items-center pb-5" style={{ borderBottom: '#e7e4e4 1px solid' }}>
-                <IoGolf style={{ fontSize: '23px', marginRight: '10px' }} />
-
-                <label className="block  text-lg text-gray-700 whitespace-nowrap">Course</label>
-                <select onChange={(e) => {setSelectedCourseID(e.target.value)}}
-                    // className="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" 
-                    className="  block w-full px-3 py-1.5 text-lg font-semibold text-gray-900 bg-white bg-clip-padding cursor-pointer outline-none caret-pink-500 "
-
-                    aria-label="Default select example">
-                    {/* <option >Golf course</option>  */}
-                    <option value={null}>Select your course</option>
-                    {courses && courses.map((course, i) => {
-                        return <option key={i} value={course.course_id}>{course.course_fullname}</option>
-                    })}
-
-
-                </select>
-            </div>
-            {!selectedCourse &&
-                <div>
-
-
-                    {defaultCourseFieldsAndOptions.map((fieldAndOptions, i) => {
-                        //dont show field if it has a fixed option 
-
-
-                        return (<div key={i} className='mb-4 flex items-center pt-1 pb-5' style={{ borderBottom: '#e7e4e4 1px solid' }} >
-                            <label className="block  text-lg text-gray-700 whitespace-nowrap ">{fieldAndOptions.field_fullname}</label>
-                            <select
-
-                                className="  block w-full px-3 py-1.5 text-lg font-semibold text-gray-900 bg-white bg-clip-padding cursor-pointer outline-none "
-                                aria-label="Default select example">
-                                {fieldAndOptions?.field_options.map((option, i) => {
-
-                                    return <option key={i} value={option.option_name} >{option.option_fullname}</option>
-                                })}
-
-                            </select>
-                        </div>)
-                    })}
-
-
-
-
+                        <span className="sr-only">Loading...</span>
+                    </div>
                 </div>}
-            {selectedCourse && <div>
 
 
-                {selectedCourse.course_fields_and_options.map((fieldAndOptions, i) => {
-                    //dont show field if it has a fixed option 
-                    if (fieldAndOptions?.field_fixed_option) {
-                        return null
-                    }
+                {golferData && courses?.length && <div className='options  mt-2 p-6 pt-4' >
+                    <div className="mb-3  flex items-center pb-5" style={{ borderBottom: '#e7e4e4 1px solid' }}>
+                        <IoGolf style={{ fontSize: '23px', marginRight: '10px' }} />
 
-                    if ((fieldAndOptions.field_name == 'start_time') || fieldAndOptions.field_name == 'end_time') {
-                        //create an array that contains from 00 to 23 
-                        let hours = []
-                        for (let i = 6; i <= 17; i++) {
-                            hours.push(i)
-                        }
+                        <label className="block  text-lg text-gray-700 whitespace-nowrap">Course</label>
+                        <select onChange={(e) => { setSelectedCourseID(e.target.value) }}
+                            // className="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" 
+                            className="  block w-full px-3 py-1.5 text-lg font-semibold text-gray-900 bg-white bg-clip-padding cursor-pointer outline-none caret-pink-500 "
 
-                        return (
-                            <div key={i} className='mb-4 flex items-center pt-1 pb-5' style={{ borderBottom: '#e7e4e4 1px solid' }} >
-                                <label className="block  text-lg text-gray-700 whitespace-nowrap "  >{fieldAndOptions.field_fullname}</label>
+                            aria-label="Default select example">
+                            {/* <option >Golf course</option>  */}
+                            <option value={null}>Select your course</option>
+                            {courses && courses.map((course, i) => {
+                                return <option key={i} value={course.course_id}>{course.course_fullname}</option>
+                            })}
+
+
+                        </select>
+                    </div>
+                    {!selectedCourse &&
+                        <div>
+
+
+                            {defaultCourseFieldsAndOptions.map((fieldAndOptions, i) => {
+                                //dont show field if it has a fixed option 
+
+
+                                return (<div key={i} className='mb-4 flex items-center pt-1 pb-5' style={{ borderBottom: '#e7e4e4 1px solid' }} >
+                                    <label className="block  text-lg text-gray-700 whitespace-nowrap ">{fieldAndOptions.field_fullname}</label>
+                                    <select
+
+                                        className="  block w-full px-3 py-1.5 text-lg font-semibold text-gray-900 bg-white bg-clip-padding cursor-pointer outline-none "
+                                        aria-label="Default select example">
+                                        {fieldAndOptions?.field_options.map((option, i) => {
+
+                                            return <option key={i} value={option.option_name} >{option.option_fullname}</option>
+                                        })}
+
+                                    </select>
+                                </div>)
+                            })}
+
+
+
+
+                        </div>}
+                    {selectedCourse && <div>
+
+
+                        {selectedCourse.course_fields_and_options.map((fieldAndOptions, i) => {
+                            //dont show field if it has a fixed option 
+                            if (fieldAndOptions?.field_fixed_option) {
+                                return null
+                            }
+
+                            if ((fieldAndOptions.field_name == 'start_time') || fieldAndOptions.field_name == 'end_time') {
+                                //create an array that contains from 00 to 23 
+                                let hours = []
+                                for (let i = 6; i <= 17; i++) {
+                                    hours.push(i)
+                                }
+
+                                return (
+                                    <div key={i} className='mb-4 flex items-center pt-1 pb-5' style={{ borderBottom: '#e7e4e4 1px solid' }} >
+                                        <label className="block  text-lg text-gray-700 whitespace-nowrap "  >{fieldAndOptions.field_fullname}</label>
+                                        <select
+                                            onChange={(e) => {
+                                                var newPreferences = preferences
+                                                newPreferences[fieldAndOptions.field_name] = e.target.value
+                                                setPreferences(newPreferences)
+                                                console.log({ preferences })
+                                            }}
+                                            name={fieldAndOptions.field_name}
+                                            className="  block w-full px-3 py-1.5 text-lg font-semibold text-gray-900 bg-white bg-clip-padding cursor-pointer outline-none "
+                                            defaultValue={preferences[fieldAndOptions.field_name]}
+                                        >
+
+                                            {hours.map((hour, i) => {
+                                                var displayHour = hour
+                                                //change hour to am or pm 
+                                                if (hour == 12) {
+                                                    displayHour = hour + ':00 PM'
+                                                }
+                                                else if (hour > 12) {
+                                                    displayHour = hour - 12 + ':00 PM'
+                                                } else {
+                                                    displayHour = hour + ':00 AM'
+                                                }
+
+                                                return <option
+                                                    key={i}
+                                                    value={hour}
+
+                                                >{displayHour}</option>
+                                            })
+
+                                            }
+                                        </select>
+
+
+
+                                    </div>)
+                            }
+
+
+                            return (<div key={i} className='mb-4 flex items-center pt-1 pb-5' style={{ borderBottom: '#e7e4e4 1px solid' }} >
+                                <label className="block  text-lg text-gray-700 whitespace-nowrap ">{fieldAndOptions.field_fullname}</label>
                                 <select
                                     onChange={(e) => {
                                         var newPreferences = preferences
@@ -208,131 +256,89 @@ const HandleAddNewAlert = async () => {
                                         setPreferences(newPreferences)
                                         console.log({ preferences })
                                     }}
+
                                     name={fieldAndOptions.field_name}
+                                    //className="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" 
                                     className="  block w-full px-3 py-1.5 text-lg font-semibold text-gray-900 bg-white bg-clip-padding cursor-pointer outline-none "
-                                    defaultValue={preferences[fieldAndOptions.field_name]}
-                                >
+                                    aria-label="Default select example">
+                                    {/* <option >{fieldAndOptions.field_fullname}</option> */}
+                                    {fieldAndOptions?.field_options.map((option, i) => {
+                                        var showThisOption = true
+                                        var optionConditions = option?.conditions
 
-                                    {hours.map((hour, i) => {
-                                        var displayHour = hour
-                                        //change hour to am or pm 
-                                        if (hour == 12) {
-                                            displayHour = hour + ':00 PM'
-                                        }
-                                        else if (hour > 12) {
-                                            displayHour = hour - 12 + ':00 PM'
+                                        optionConditions?.forEach(condition => {
+                                            //condition 
+                                            var conditionField = condition?.field
+                                            var conditionValue = condition?.value
+
+                                            //make sure value of this condition in preferences is equal to conditionValue
+                                            if (conditionField && conditionValue) {
+                                                if (preferences?.[conditionField] != conditionValue) {
+                                                    showThisOption = false
+                                                }
+                                            }
+                                        })
+
+
+                                        if (!showThisOption) return null
+
+                                        //if field name is date, then generate dates for the next 7 days
+                                        if (fieldAndOptions.field_name == "date") {
+                                            return GenerateDatesForNext7Days(option.option_name).map((date, i) => {
+                                                return <option key={i} value={date} >{
+                                                    //show date in legible format
+                                                    new Date((date + ' 12:30').toLocaleString('en-US', { timeZone: 'UTC' })).toLocaleDateString('en-US', {
+                                                        weekday: 'long', // long, short, narrow
+                                                        year: 'numeric', // numeric, 2-digit
+                                                        month: 'long', // numeric, 2-digit, long, short, narrow
+                                                        day: 'numeric' // numeric, 2-digit
+                                                    })
+
+                                                }</option>
+                                            })
                                         } else {
-                                            displayHour = hour + ':00 AM'
+                                            return <option key={i} value={option.option_name} >{option.option_fullname}</option>
                                         }
 
-                                        return <option
-                                            key={i}
-                                            value={hour}
 
-                                        >{displayHour}</option>
-                                    })
 
-                                    }
+                                    })}
+
+
                                 </select>
 
-
-
                             </div>)
-                    }
+                        })}
 
 
-                    return (<div key={i} className='mb-4 flex items-center pt-1 pb-5' style={{ borderBottom: '#e7e4e4 1px solid' }} >
-                        <label className="block  text-lg text-gray-700 whitespace-nowrap ">{fieldAndOptions.field_fullname}</label>
-                        <select
-                            onChange={(e) => {
-                                var newPreferences = preferences
-                                newPreferences[fieldAndOptions.field_name] = e.target.value
-                                setPreferences(newPreferences)
-                                console.log({ preferences })
+
+
+                    </div>}
+                    <div className="flex space-x-2 justify-center mt-12 mb-4">
+                        <button type="button"
+
+
+                            // data-bs-toggle="modal" data-bs-target="#exampleModal"
+                            style={{
+                                opacity: addNewAlertLoading || addAlertLoading || reachedAlertsCap ? '0.5' : '1',
+                                backgroundColor: addNewAlertLoading || addAlertLoading || reachedAlertsCap && '#e7e4e4',
+                                color: addNewAlertLoading || addAlertLoading || reachedAlertsCap && '#a8a8a8',
+                                pointerEvents: addNewAlertLoading || addAlertLoading || reachedAlertsCap && 'none'
                             }}
 
-                            name={fieldAndOptions.field_name}
-                            //className="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" 
-                            className="  block w-full px-3 py-1.5 text-lg font-semibold text-gray-900 bg-white bg-clip-padding cursor-pointer outline-none "
-                            aria-label="Default select example">
-                            {/* <option >{fieldAndOptions.field_fullname}</option> */}
-                            {fieldAndOptions?.field_options.map((option, i) => {
-                                var showThisOption = true
-                                var optionConditions = option?.conditions
-
-                                optionConditions?.forEach(condition => {
-                                    //condition 
-                                    var conditionField = condition?.field
-                                    var conditionValue = condition?.value
-
-                                    //make sure value of this condition in preferences is equal to conditionValue
-                                    if (conditionField && conditionValue) {
-                                        if (preferences?.[conditionField] != conditionValue) {
-                                            showThisOption = false
-                                        }
-                                    }
-                                })
-
-
-                                if (!showThisOption) return null
-
-                                //if field name is date, then generate dates for the next 7 days
-                                if (fieldAndOptions.field_name == "date") {
-                                    return GenerateDatesForNext7Days(option.option_name).map((date, i) => {
-                                        return <option key={i} value={date} >{
-                                            //show date in legible format
-                                            new Date((date + ' 12:30').toLocaleString('en-US', { timeZone: 'UTC' })).toLocaleDateString('en-US', {
-                                                weekday: 'long', // long, short, narrow
-                                                year: 'numeric', // numeric, 2-digit
-                                                month: 'long', // numeric, 2-digit, long, short, narrow
-                                                day: 'numeric' // numeric, 2-digit
-                                            })
-
-                                        }</option>
-                                    })
-                                } else {
-                                    return <option key={i} value={option.option_name} >{option.option_fullname}</option>
-                                }
-
-
-
-                            })}
-
-
-                        </select>
-
-                    </div>)
-                })}
-
-
-
-
-            </div>}
-            <div className="flex space-x-2 justify-center mt-12 mb-4">
-                <button type="button"
-  
-
-                   // data-bs-toggle="modal" data-bs-target="#exampleModal"
-                    style={{
-                        opacity: addNewAlertLoading || addAlertLoading || reachedAlertsCap ? '0.5' : '1',
-                        backgroundColor: addNewAlertLoading || addAlertLoading || reachedAlertsCap && '#e7e4e4',
-                        color: addNewAlertLoading || addAlertLoading || reachedAlertsCap && '#a8a8a8',
-                        pointerEvents: addNewAlertLoading || addAlertLoading || reachedAlertsCap && 'none'
-                    }}
-
-                    className="inline-block px-10 py-4 bg-green-600 text-white font-medium text-sm leading-tight uppercase rounded shadow-md hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg transition duration-150 ease-in-out w-[100%] mb-2"
-                    onClick={()=>HandleAddNewAlert()} >
-                    Create Alert
-                </button>
+                            className="inline-block px-10 py-4 bg-green-600 text-white font-medium text-sm leading-tight uppercase rounded shadow-md hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg transition duration-150 ease-in-out w-[100%] mb-2"
+                            onClick={() => HandleAddNewAlert()} >
+                            Create Alert
+                        </button>
+                    </div>
+                    {addNewAlertError && <p className="text-red-400 text-sm text-center mb-6"> {addNewAlertError} </p>}
+                    {reachedAlertsCap && <p className="text-gray-600  text-sm mb-6">
+                        Maximum number of active alerts attained, please delete an alert to create a new one
+                    </p>}
+                </div>}
             </div>
-            {addNewAlertError && <p className="text-red-400 text-sm text-center mb-6"> {addNewAlertError} </p>}
-            {reachedAlertsCap && <p className="text-gray-600  text-sm mb-6">
-                Maximum number of active alerts attained, please delete an alert to create a new one
-            </p>}
-        </div>}
-    </div>
 
-    <div className="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
+            <div className="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
                 id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog relative w-auto pointer-events-none">
                     <div
@@ -352,12 +358,12 @@ const HandleAddNewAlert = async () => {
                             <button type="button" className="px-6 py-2.5 bg-gray-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-gray-700 hover:shadow-lg focus:bg-gray-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-gray-800 active:shadow-lg transition duration-150 ease-in-out opacity-80" data-bs-dismiss="modal">Close</button>
                             <button type="button"
                                 onClick={() => {
-                                   
+
                                     if (!selectedCourse) {
 
                                         return;
                                     }
-                                    AddNewAlertPreferences(golferData,setGolferData, preferences, golferUUID, setAddNewAlertError, ShowNotification)
+                                    AddNewAlertPreferences(golferData, setGolferData, preferences, golferUUID, setAddNewAlertError, ShowNotification)
 
                                 }}
                                 data-bs-dismiss="modal"
@@ -369,8 +375,8 @@ const HandleAddNewAlert = async () => {
             </div>
 
 
-</div>
-  )
+        </div>
+    )
 }
 
 export default CreateTeeTimeAlert

@@ -4,11 +4,11 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import lazy from "react-lazy-with-preload";
 import 'animate.css';
 
-const Homepage = lazy(() => import('./pages/Homepage'));
-const Loginpage = lazy(() => import('./pages/Loginpage'));
-const Joinpage = lazy(() => import('./pages/Joinpage'));
-const Landingpage = lazy(() => import('./pages/Landingpage'));
-
+const HomePage = lazy(() => import('./pages/HomePage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const JoinPage = lazy(() => import('./pages/JoinPage'));
+const LandingPage = lazy(() => import('./pages/LandingPage'));
+const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 
 function App() {
   return (
@@ -19,15 +19,17 @@ function App() {
       <div className="pages">
 
         <Routes>
-        <Route exact path="/" element={<Landingpage />} />
-        <Route exact path="/welcome" element={<Landingpage />} />
+        <Route exact path="/" element={<LandingPage />} />
+        <Route exact path="/welcome" element={<LandingPage />} />
 
           {/* <Route exact path="/" element={<Loginpage />} /> */}
-          <Route exact path="/login" element={<Loginpage />} />
+          <Route exact path="/login" element={<LoginPage />} />
 
-          <Route exact path="/join" element={<Joinpage />} />
+          <Route exact path="/join" element={<JoinPage />} />
 
-          <Route exact path="/user" element={<Homepage />} />
+          <Route exact path="/user" element={<HomePage />} />
+
+          <Route exact path="/dashboard" element={<DashboardPage />} />
 
 
         </Routes>

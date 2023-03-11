@@ -531,3 +531,22 @@ color: #242555;
     border-color: #c52222;
 }
 
+
+
+//pulsing class with pulsing animation of opacity going from 0 to 1 and back to 0
+.pulsing {
+    animation: pulseanim 2s infinite;
+}
+
+//pulseanim animation
+@keyframes pulseanim {
+    0% {
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.4;
+    }
+}

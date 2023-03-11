@@ -33,21 +33,7 @@ function Homepage() {
     useEffect( () => {
         const HandleSession = async () => {
             setIsUserLoggedIn(await LoggedInOrNot())
-            // //if user is not logged in, redirect to login page
-            // const auth = getAuth();
-            // //wait until auth is loaded
-            // await new Promise((resolve) => {
-            //     const unsubscribe = onAuthStateChanged(auth, (user) => {
-            //         unsubscribe();
-            //         resolve(user);
-            //     });
-            // });
-            
-            // if (!auth.currentUser) {
-            //     console.log('user is not logged in !')
-            //     navigate('/login')
-            //   localStorage.removeItem('isUserLoggedIn');  
-            // }
+
         }
         HandleSession()
           
